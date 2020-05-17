@@ -1,0 +1,48 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using SemesterProject.ApiData.Entities;
+using SemesterProject.MyFaceMVC.Services;
+
+namespace SemesterProject.MyFaceMVC.Controllers
+{
+    [Authorize]
+    public class MessageController : Controller
+    {
+        private readonly IMyFaceApiService _myFaceApiService;
+        private readonly string _userId;
+        public MessageController(IMyFaceApiService myFaceApiService, IHttpContextAccessor httpContextAccessor)
+        {
+            _myFaceApiService = myFaceApiService;
+            _myFaceApiService.AddUserIfNotExist(httpContextAccessor.HttpContext.User).GetAwaiter();
+            _userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+        }
+
+        public async Task<IActionResult> Index(string friendId)
+        {
+            if (!string.IsNullOrWhiteSpace(friendId))
+            {
+                IEnumerable<Message> messages = await _myFaceApiService.GetMessagesWith(_userId, friendId);
+                var friend = await _myFaceApiService.GetUser(friendId);
+                ViewData["friendId"] = friendId;
+                ViewData["userId"] = _userId.ToString();
+                if (friend != null)
+                {
+                    ViewData["friendFirstName"] = friend.FirstName;
+                    ViewData["friendLastName"] = friend.LastName;
+                }
+                return View(messages);
+            }
+            else
+            {
+                return NotFound();
+            }
+            
+        }
+    }
+}

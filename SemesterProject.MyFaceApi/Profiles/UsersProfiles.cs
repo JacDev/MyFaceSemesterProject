@@ -1,0 +1,30 @@
+﻿using AutoMapper;
+using SemesterProject.ApiData.Entities;
+using SemesterProject.ApiData.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SemesterProject.MyFaceApi.Profiles
+{
+	public class UsersProfiles : Profile
+	{
+		public UsersProfiles()
+		{
+			CreateMap<UserToSend, User>();
+			CreateMap<User, UserToReturn>()
+				.ForMember(
+				dest => dest.FriendsCounter,
+				opt => opt.MapFrom(src => src.Relations.Count))
+				.ForMember(
+				dest => dest.PostCounter,
+				opt => opt.MapFrom(src => src.Posts.Count))
+				.ForMember(
+				dest => dest.NewNotificationsCounter,
+				opt => opt.MapFrom(src => src.Notifications.Where(s => s.WasSeen == false).Count()));
+			CreateMap<User, UserToUpdate>();
+			CreateMap<UserToUpdate, User>();
+		}
+	}
+}

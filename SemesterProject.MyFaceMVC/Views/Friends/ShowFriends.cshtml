@@ -1,0 +1,36 @@
+﻿@model List<SemesterProject.ApiData.Models.UserToReturnAsFriend>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Friends</h1>
+
+<div class="col-12 border p-3 mt-3">
+    <form method="post">
+        <table class="table col-12">
+            <thead>
+                <tr>
+                    <th class="col-9">Name</th>
+                    <th class="col-1"></th>
+                </tr>
+            </thead>
+            @foreach (var user in Model)
+            {
+                <tbody>
+                    <tr> 
+                        <td>
+                        <a asp-action="ViewProfile" asp-route-friendId="@user.Id">@user.FirstName @user.LastName</a>
+                        </td>
+                        <td>
+                            <button asp-controller="Message" asp-action="Index" asp-route-friendId="@user.Id" class="btn btn-light btn-sm">Send Message</button>
+                        </td>
+                        <td>
+                            <button asp-controller="Friends" asp-action="DeleteFriend" asp-route-friendId="@user.Id" class="btn btn-danger btn-sm">Delete</button>
+                        </td>
+
+                    </tr>
+                </tbody>
+            }
+        </table>
+    </form>
+</div>

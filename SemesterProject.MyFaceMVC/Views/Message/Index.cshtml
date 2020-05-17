@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Message>
+@{
+    ViewData["Title"] = ViewData["friendFirstName"].ToString() + ViewData["friendLastName"].ToString();
+}
+
+<div class="jumbotron bg-light">
+    <h2 class="text-center text-primary">
+        @ViewData["friendFirstName"].ToString() @ViewData["friendLastName"].ToString()
+    </h2>
+
+    <div class="row">
+        <ul class="col-md-12" id="messagesList">
+            @if (Model != null)
+            {
+                @foreach (var message in Model.OrderBy(m => m.When))
+                {
+                    string offset;
+
+                    @if (message.ToWho == Guid.Parse(ViewData["userId"].ToString()))
+                    {
+                        offset = "col-md-6 offset-md-6";
+                    }
+                    else
+                    {
+                        offset = "col-md-6 offset-md-0";
+                    }
+
+                    <li class="row">
+                        <div class="@offset">
+                            <div class="container darker bg-primary">
+                                <p class="text-left text-white m-1">@message.Text</p>
+                                <span class="time-left text-light">@message.When.ToString("M/dd/yyyy hh:MM tt")</span>
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+        <div class="col-md-12">
+            <div class="form-group">
+                <input class="form-control" id="messageText" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Send" id="submitButton" class="btn btn-outline-primary btn-block" />
+            </div>
+        </div>
+    </div>
+
+</div>
+@if (User.Identity.IsAuthenticated)
+{
+    <script>
+	var userId = "@ViewData["userId"]";
+	var friendId = "@ViewData["friendId"]";
+    </script>
+}
+<script src="~/js/chat.js"></script>
