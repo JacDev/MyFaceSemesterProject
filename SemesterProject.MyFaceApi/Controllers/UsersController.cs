@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using SemesterProject.ApiData.Entities;
@@ -35,9 +34,9 @@ namespace SemesterProject.MyFaceApi.Controllers
 
 		[AllowAnonymous]
 		[HttpGet]
-		public ActionResult<IQueryable<UserToReturn>> GetUsers(string searchName = null)
+		public ActionResult<IQueryable<UserToReturnWithCounters>> GetUsers(string searchName = null)
 		{
-			List<User> usersFromRepo = new List<User>();
+			List<User> usersFromRepo;
 			if (searchName == null)
 			{
 				usersFromRepo = _userRepository.GetUsers().ToList();
@@ -46,22 +45,22 @@ namespace SemesterProject.MyFaceApi.Controllers
 			{
 				usersFromRepo = _userRepository.GetUsers(searchName).ToList();
 			}
-			return Ok(_mapper.Map<IEnumerable<UserToReturn>>(usersFromRepo));
+			return Ok(_mapper.Map<IEnumerable<UserToReturnWithCounters>>(usersFromRepo));
 		}
 
 		[HttpGet("{userId}", Name = "GetUser")]
-		public async Task<ActionResult<UserToReturn>> GetUser(Guid userId)
+		public async Task<ActionResult<UserToReturnWithCounters>> GetUser(Guid userId)
 		{
 			User userFromRepo = await _userRepository.GetUserAsync(userId);
 			if (userFromRepo == null)
 			{
 				return NotFound();
 			}
-			return Ok(_mapper.Map<UserToReturn>(userFromRepo));
+			return Ok(_mapper.Map<UserToReturnWithCounters>(userFromRepo));
 		}
 
 		[HttpPost]
-		public async Task<ActionResult<UserToReturn>> AddUser(UserToSend user)
+		public async Task<ActionResult<UserToReturnWithCounters>> AddUser(BasicUserData user)
 		{
 			if (user == null)
 			{
@@ -73,7 +72,7 @@ namespace SemesterProject.MyFaceApi.Controllers
 				await _userRepository.AddUserAcync(userEntity);
 			}
 
-			UserToReturn userToReturn = _mapper.Map<UserToReturn>(userEntity);
+			UserToReturnWithCounters userToReturn = _mapper.Map<UserToReturnWithCounters>(userEntity);
 
 			return CreatedAtRoute("GetUser",
 			new { userId = userToReturn.Id },
@@ -81,7 +80,7 @@ namespace SemesterProject.MyFaceApi.Controllers
 		}
 
 		[HttpPatch("{userId}")]
-		public async Task<ActionResult> PartiallyUpdateUser(Guid userId, JsonPatchDocument<UserToUpdate> patchDocument)
+		public async Task<ActionResult> PartiallyUpdateUser(Guid userId, JsonPatchDocument<BasicUserData> patchDocument)
 		{
 			User userFromRepo = await _userRepository.GetUserAsync(userId);
 
@@ -89,7 +88,7 @@ namespace SemesterProject.MyFaceApi.Controllers
 			{
 				return NotFound();
 			}
-			UserToUpdate userToPatch = _mapper.Map<UserToUpdate>(userFromRepo);
+			BasicUserData userToPatch = _mapper.Map<BasicUserData>(userFromRepo);
 
 			patchDocument.ApplyTo(userToPatch, ModelState);
 

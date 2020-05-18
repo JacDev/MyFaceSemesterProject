@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SemesterProject.ApiData.Models
+﻿namespace SemesterProject.ApiData.Models
 {
 	public enum NotificationType
 	{

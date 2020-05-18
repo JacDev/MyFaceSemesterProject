@@ -1,5 +1,3 @@
-using System;
-
 namespace SemesterProject.MyFaceMVC.Models
 {
 	public class ErrorViewModel

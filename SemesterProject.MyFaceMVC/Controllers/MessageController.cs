@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SemesterProject.ApiData.Entities;
+using SemesterProject.ApiData.Models;
 using SemesterProject.MyFaceMVC.Services;
+using SemesterProject.MyFaceMVC.ViewModels;
 
 namespace SemesterProject.MyFaceMVC.Controllers
 {
@@ -41,8 +43,23 @@ namespace SemesterProject.MyFaceMVC.Controllers
             else
             {
                 return NotFound();
+            }          
+        }
+        public async Task<IActionResult> Messages()
+        {
+            var messages = await _myFaceApiService.GetMessages(_userId);
+
+            List<MessagesWithUserData> messagesToReturn = new List<MessagesWithUserData>();
+
+            foreach(var message in messages)
+            {
+                messagesToReturn.Add(new MessagesWithUserData
+                {
+                    Message = message,
+                    User = await _myFaceApiService.GetUser(message.FromWho.ToString())
+                });
             }
-            
+            return View(messagesToReturn);
         }
     }
 }

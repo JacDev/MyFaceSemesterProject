@@ -63,6 +63,18 @@ namespace SemesterProject.ApiData.Repository
 			}
 			return messageToReturn;
 		}
+		public IEnumerable<Message> GetLastMessages(Guid userId)
+		{
+			var lastMessages = _appDbContext.Messages.Where(x => x.ToWho == userId || x.FromWho == userId);
+
+
+
+
+
+
+
+			return lastMessages;
+		}
 
 		public IQueryable<Message> GetUserMessagesWith(Guid userId, Guid friendId)
 		{

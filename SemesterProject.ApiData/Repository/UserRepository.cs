@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SemesterProject.ApiData.AppDbContext;
 using SemesterProject.ApiData.Entities;
-using SemesterProject.ApiData.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,11 +61,7 @@ namespace SemesterProject.ApiData.Repository
 			_appDbContext.Users.Remove(user);
 			await _appDbContext.SaveAsync();
 		}
-		/// <summary>
-		/// Check if user is in database. 
-		/// </summary>
-		/// <param name="userId"></param>
-		/// <returns>Return true, if user exist</returns>
+
 		public bool CheckIfUserExists(Guid userId)
 		{
 			if (userId == Guid.Empty)

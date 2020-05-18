@@ -2,6 +2,7 @@
 using SemesterProject.ApiData.Models;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -9,25 +10,26 @@ namespace SemesterProject.MyFaceMVC.Services
 {
 	public interface IMyFaceApiService
 	{
-		Task AddFriendsRelation(string userId, RelationToAdd relationForAdd);
-		Task AddMessage(string userId, MessageToAdd messageForAdd);
+		Task<HttpResponseMessage> AddFriend(string userId, RelationToAdd relationForAdd);
+		Task<HttpResponseMessage> AddMessage(string userId, MessageToAdd messageForAdd);
+		Task<HttpResponseMessage> AddNotification(NotificationToAdd notificationForAdd);
+		Task<HttpResponseMessage> AddPost(string userId, PostToAdd postForAdd);
+		Task<HttpResponseMessage> AddPostComment(string userId, PostComment postComment);
+		Task<HttpResponseMessage> AddPostLike(string userId, PostLike postLike);
+		Task<HttpResponseMessage> AddUserIfNotExist(ClaimsPrincipal userPrincipal);
+		Task<HttpResponseMessage> DeleteFriend(string userId, string friendId);
+		Task<HttpResponseMessage> DeletePost(string userId, string postId);
+		Task<HttpResponseMessage> DeletePostComment(string postId, string commentId, string userId);
+		Task<HttpResponseMessage> DeletePostLike(string postId, string fromWho, string userId);
+		Task<List<BasicUserData>> GetFoundUsers(string searchName);
+		Task<List<BasicUserData>> GetFriends(string userId);
+		Task<IEnumerable<Message>> GetMessages(string userId);
 		Task<IEnumerable<Message>> GetMessagesWith(string userId, string friendId);
-		Task AddNotification(string userId, NotificationToAdd notificationForAdd);
 		Task<IEnumerable<NotificationWithBasicFromWhoData>> GetNotifications(string userId);
-		Task AddPost(string userId, PostToAdd postForAdd);
 		Task<Post> GetPost(string userId, string postId);
-		Task DeleteFriendsRelation(string userId, string friendId);
-		Task<List<UserToReturnAsFriend>> GetFriends(string userId);
-		Task<UserToReturn> GetUser(string userId);
 		Task<List<Post>> GetPosts(string userId);
-		Task DeletePost(string userId, string postId);
-		Task MarkNotificationAsSeen(string userId, Guid notificationId);
-		Task UpdatePost(string userId, string postId, PostToUpdate postForUpdate);
-		Task AddUserIfNotExist(ClaimsPrincipal principal);
-		Task<List<UserToReturn>> GetFoundUsers(string searchName);
-		Task AddPostLike(string userId, PostLike post);
-		Task DeletePostLike(string postId, string fromWho, string userId);
-		Task AddPostComment(string userId, PostComment postComment);
-		Task DeletePostComment(string postId, string commentId, string userId);
+		Task<UserToReturnWithCounters> GetUser(string userId);
+		Task<HttpResponseMessage> MarkNotificationAsSeen(string userId, Guid notificationId);
+		Task<HttpResponseMessage> UpdatePost(string userId, string postId, PostToUpdate postToUpdate);
 	}
 }

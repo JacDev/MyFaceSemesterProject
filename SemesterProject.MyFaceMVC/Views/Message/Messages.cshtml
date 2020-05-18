@@ -1,0 +1,15 @@
+﻿@model IEnumerable<MessagesWithUserData>
+
+@{
+
+}
+    <div class="col-12 border p-3 mt-3">
+        @foreach (var message in Model)
+        {
+            @message.User.FirstName @message.User.LastName @message.Message.Text
+        }
+
+
+
+
+    </div>

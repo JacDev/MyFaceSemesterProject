@@ -35,7 +35,7 @@ namespace SemesterProject.MyFaceApi.Controllers
 		}
 
 		[HttpGet]
-		public ActionResult<IEnumerable<UserToReturn>> GetFriends(Guid userId)
+		public ActionResult<IEnumerable<UserToReturnWithCounters>> GetFriends(Guid userId)
 		{
 			if (!_userRepository.CheckIfUserExists(userId))
 			{
@@ -45,7 +45,7 @@ namespace SemesterProject.MyFaceApi.Controllers
 			List<Guid> friendsId = _relationRepository.GetUserRelations(userId).Select(s => (s.FriendId == userId ? s.UserId : s.FriendId)).ToList();
 			var friends = _userRepository.GetUsers(friendsId);
 
-			return Ok(_mapper.Map<IEnumerable<UserToReturn>>(friends));
+			return Ok(_mapper.Map<IEnumerable<UserToReturnWithCounters>>(friends));
 		}
 
 		[HttpPost]

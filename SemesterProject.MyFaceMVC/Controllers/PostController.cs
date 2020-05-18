@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SemesterProject.ApiData.Entities;
 using SemesterProject.ApiData.Models;
-using SemesterProject.MyFaceMVC.Models;
 using SemesterProject.MyFaceMVC.Services;
+using SemesterProject.MyFaceMVC.ViewModels;
 
 namespace SemesterProject.MyFaceMVC.Controllers
 {
@@ -65,7 +65,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
             ViewData["currentUserProfileId"] = userId.ToString();
             ViewData["loggedUserId"] = _userId.ToString();
 
-            List<UserToReturn> user = new List<UserToReturn>();
+            List<UserToReturnWithCounters> user = new List<UserToReturnWithCounters>();
             foreach(var userPost in post.PostComments)
             {
                 user.Add(await _myFaceApiService.GetUser(userPost.FromWho.ToString()));

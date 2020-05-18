@@ -5,7 +5,6 @@ using SemesterProject.MyFaceMVC.Data;
 using SemesterProject.MyFaceMVC.Repository;
 using SemesterProject.MyFaceMVC.Services;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -32,7 +31,7 @@ namespace SemesterProject.MyFaceMVC.Hubs
 					string toWhomConnectionId = _onlineUsers.GetUserNotificationConnetionId(toUserId);
 					await Clients.Client(toWhomConnectionId).SendAsync("ReceiveNotification");
 				}
-				await _myFaceApiService.AddNotification(toUserId, new NotificationToAdd
+				await _myFaceApiService.AddNotification(new NotificationToAdd
 				{
 					FromWho = Guid.Parse(fromWho),
 					UserId = Guid.Parse(toUserId),

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SemesterProject.ApiData.Models
 {
-	public class UserToReturn
+	public class UserToReturnWithCounters
 	{
         public Guid Id { get; set; }
         public string FirstName { get; set; }

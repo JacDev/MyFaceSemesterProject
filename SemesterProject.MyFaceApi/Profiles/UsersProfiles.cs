@@ -12,8 +12,8 @@ namespace SemesterProject.MyFaceApi.Profiles
 	{
 		public UsersProfiles()
 		{
-			CreateMap<UserToSend, User>();
-			CreateMap<User, UserToReturn>()
+			CreateMap<BasicUserData, User>();
+			CreateMap<User, UserToReturnWithCounters>()
 				.ForMember(
 				dest => dest.FriendsCounter,
 				opt => opt.MapFrom(src => src.Relations.Count))
@@ -23,8 +23,8 @@ namespace SemesterProject.MyFaceApi.Profiles
 				.ForMember(
 				dest => dest.NewNotificationsCounter,
 				opt => opt.MapFrom(src => src.Notifications.Where(s => s.WasSeen == false).Count()));
-			CreateMap<User, UserToUpdate>();
-			CreateMap<UserToUpdate, User>();
+			CreateMap<User, BasicUserData>();
+			CreateMap<BasicUserData, User>();
 		}
 	}
 }

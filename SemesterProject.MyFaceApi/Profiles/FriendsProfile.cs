@@ -12,8 +12,8 @@ namespace SemesterProject.MyFaceApi.Profiles
 	{
 		public FriendsProfile()
 		{
-			CreateMap<User, UserToReturnAsFriend>();
-			CreateMap<User, UserToReturn>();
+			CreateMap<User, BasicUserData>();
+			CreateMap<User, UserToReturnWithCounters>();
 		}
 	}
 }

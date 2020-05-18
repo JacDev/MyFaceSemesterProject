@@ -33,7 +33,7 @@ namespace SemesterProject.MyFaceMVC.Hubs
 				//if user is offline, add notification
 				else
 				{
-					await _myFaceApiService.AddNotification(toUserId, new NotificationToAdd
+					await _myFaceApiService.AddNotification(new NotificationToAdd
 					{
 						FromWho = Guid.Parse(fromWho),
 						UserId = Guid.Parse(toUserId),

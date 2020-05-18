@@ -13,25 +13,21 @@ namespace SemesterProject.MyFaceMVC.ViewComponents
 	public class NavigationBarViewComponents : ViewComponent
 	{
 		private readonly IMyFaceApiService _iMyFaceApiService;
-		private readonly IHttpContextAccessor _httpContextAccessor;
 		private readonly string _userId;
 
 		public NavigationBarViewComponents(IMyFaceApiService iMyFaceApiService, IHttpContextAccessor httpContextAccessor)
 		{
 			_iMyFaceApiService = iMyFaceApiService;
-			_httpContextAccessor = httpContextAccessor;
 			_userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
 		}
-
 		public async Task<IViewComponentResult> InvokeAsync()
 		{
 			if (string.IsNullOrWhiteSpace(_userId))
 			{
 				throw new ArgumentNullException(nameof(_userId));
 			}
-			UserToReturn bacisUserCounters = await _iMyFaceApiService.GetUser(_userId);
-				return View(bacisUserCounters);
+			UserToReturnWithCounters bacisUserCounters = await _iMyFaceApiService.GetUser(_userId);
+			return View(bacisUserCounters);
 		}
 	}
 }
-

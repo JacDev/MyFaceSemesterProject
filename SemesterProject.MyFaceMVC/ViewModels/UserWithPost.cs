@@ -2,12 +2,11 @@
 using SemesterProject.ApiData.Models;
 using System.Collections.Generic;
 
-namespace SemesterProject.MyFaceMVC.Models
+namespace SemesterProject.MyFaceMVC.ViewModels
 {
-	public class UserPostsWithPostToAdd
+	public class UserWithPost
 	{
+		public UserToReturnWithCounters user;
 		public IEnumerable<Post> Posts { get; set; }
-		public PostToAdd NewPost { get; set; }
-
 	}
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SemesterProject.MyFaceMVC.Models
+namespace SemesterProject.MyFaceMVC.ViewModels
 {
 	public class PostWithCommentToAdd
 	{
@@ -12,6 +12,6 @@ namespace SemesterProject.MyFaceMVC.Models
 		[Required]
 		[NotNull]
 		public string Text { get; set; }
-		public IEnumerable<UserToReturn> Users { get; set; }
+		public IEnumerable<UserToReturnWithCounters> Users { get; set; }
 	}
 }

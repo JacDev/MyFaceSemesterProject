@@ -47,7 +47,7 @@ namespace SemesterProject.MyFaceApi.Controllers
 			foreach (var notification in userNotifications)
 			{
 				User user = await _userRepository.GetUserAsync(notification.FromWho);
-				var userToReturn = _mapper.Map<UserToReturnAsFriend>(user);
+				var userToReturn = _mapper.Map<BasicUserData>(user);
 				notificationsToReturn.Add(new NotificationWithBasicFromWhoData
 				{
 					Notification = notification,

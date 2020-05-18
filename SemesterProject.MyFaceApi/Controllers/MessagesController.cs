@@ -32,9 +32,18 @@ namespace SemesterProject.MyFaceApi.Controllers
             Response.Headers.Add("Allow", "GET,OPTIONS,POST");
             return Ok();
         }
+        [HttpGet]
+        public ActionResult<IEnumerable<Message>> GetMessage(Guid userId)
+        {
+            if (userId == Guid.Empty || !_userRepository.CheckIfUserExists(userId))
+            {
+                return NotFound();
+            }
+            return Ok(_messageRepository.GetLastMessages(userId));
+        }
 
         [HttpGet("{friendId}")]
-        public ActionResult<IEnumerable<Message>> GetMessages(Guid userId, string friendId)
+        public ActionResult<IEnumerable<Message>> GetMessagesWith(Guid userId, string friendId)
         {
             if (userId == Guid.Empty || string.IsNullOrEmpty(friendId))
             {

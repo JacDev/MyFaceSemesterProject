@@ -1,19 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
 using SemesterProject.MyFaceMVC.Services;
 using Microsoft.AspNetCore.Http;
-using System.Net.Http.Headers;
 using IdentityModel.Client;
 using SemesterProject.MyFaceMVC.Data;
 using Microsoft.EntityFrameworkCore;
@@ -28,10 +21,7 @@ namespace SemesterProject.MyFaceMVC
 		{
 			Configuration = configuration;
 		}
-
 		public IConfiguration Configuration { get; }
-
-
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddAuthentication(options =>
@@ -56,10 +46,8 @@ namespace SemesterProject.MyFaceMVC
 						options.ClaimActions.MapUniqueJsonKey("FirstName", "FirstName");
 						options.ClaimActions.MapUniqueJsonKey("LastName", "LastName");
 
-
 						//options.GetClaimsFromUserInfoEndpoint = true;
-						options.Scope.Add("openid");
-						
+						options.Scope.Add("openid");					
 						options.Scope.Add("profile");
 						options.Scope.Add("MyFaceApi");
 						options.Scope.Add("userinfo");
@@ -83,9 +71,7 @@ namespace SemesterProject.MyFaceMVC
 				);
 
 			services.AddScoped<IOnlineUsersRepository, OnlineUsersRepository>();
-
 			services.AddSignalR();
-
 		}
 
 

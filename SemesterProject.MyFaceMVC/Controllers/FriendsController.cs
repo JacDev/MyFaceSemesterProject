@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SemesterProject.ApiData.Models;
-using SemesterProject.MyFaceMVC.Models;
 using SemesterProject.MyFaceMVC.Services;
+using SemesterProject.MyFaceMVC.ViewModels;
 
 namespace SemesterProject.MyFaceMVC.Controllers
 {
@@ -34,7 +34,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
         {
             //var foundUsers = _myFaceApiServic
 
-            return View(new List<UserToReturn>());
+            return View(new List<BasicUserData>());
         }
         [HttpPost]
         public async Task<IActionResult> FindFriends(string searchName)
@@ -45,7 +45,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
         }
         public async Task<IActionResult> AddFriend(Guid userId)
         {
-            await _myFaceApiService.AddNotification(_userId, new NotificationToAdd
+            await _myFaceApiService.AddNotification(new NotificationToAdd
             {
                 FromWho = Guid.Parse(_userId),
                 UserId = userId,
@@ -61,7 +61,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
             }
 
             await _myFaceApiService.MarkNotificationAsSeen(_userId, notificationId);
-            await _myFaceApiService.AddFriendsRelation(_userId, new RelationToAdd
+            await _myFaceApiService.AddFriend(_userId, new RelationToAdd
             {
                 FriendId = friendId,
                 SinceWhen = DateTime.Now
@@ -71,7 +71,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
         }
         public async Task<IActionResult> Deletefriend(Guid friendId)
         {
-            await _myFaceApiService.DeleteFriendsRelation(_userId, friendId.ToString());
+            await _myFaceApiService.DeleteFriend(_userId, friendId.ToString());
             return RedirectToAction(nameof(ShowFriends));
         }
         [HttpGet]

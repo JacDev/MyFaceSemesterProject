@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SemesterProject.ApiData.Entities;
 using SemesterProject.ApiData.Models;
-using SemesterProject.MyFaceMVC.Models;
 using SemesterProject.MyFaceMVC.Services;
+using SemesterProject.MyFaceMVC.ViewModels;
 
 namespace SemesterProject.MyFaceMVC.Controllers
 {
