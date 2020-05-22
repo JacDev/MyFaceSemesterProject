@@ -41,7 +41,7 @@ namespace SemesterProject.MyFaceMVC
 						options.SaveTokens = true;
 						options.CallbackPath = "/signin-oidc";
 						//options.SignedOutCallbackPath = "/signout-oidc";
-
+						
 						options.GetClaimsFromUserInfoEndpoint = true;
 						options.ClaimActions.MapUniqueJsonKey("FirstName", "FirstName");
 						options.ClaimActions.MapUniqueJsonKey("LastName", "LastName");

@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
 using SemesterProject.IdentityServer.Entities;
 using SemesterProject.IdentityServer.Models;
+
 
 namespace SemesterProject.IdentityServer.Controllers
 {
@@ -16,12 +22,14 @@ namespace SemesterProject.IdentityServer.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IIdentityServerInteractionService _interactionService;
+        private readonly IEmailSender _emailSender;
 
-        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IIdentityServerInteractionService interactionService)
+        public AuthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IIdentityServerInteractionService interactionService, IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _interactionService = interactionService;
+            _emailSender = emailSender;
         }
 
         [HttpGet]
@@ -41,7 +49,7 @@ namespace SemesterProject.IdentityServer.Controllers
                     return Redirect(loginViewModel.ReturnUrl);
                 }
             }
-            return View(new LoginViewModel { ReturnUrl = loginViewModel.ReturnUrl }) ;
+            return View(new LoginViewModel { ReturnUrl = loginViewModel.ReturnUrl });
         }
         [HttpGet]
         public async Task<IActionResult> Logout(string logoutId)
@@ -59,7 +67,7 @@ namespace SemesterProject.IdentityServer.Controllers
         }
 
         [HttpGet]
-        public IActionResult Register(string returnUrl)
+        public async Task<IActionResult> Register(string returnUrl)
         {
             return View(new RegisterViewModel { ReturnUrl = returnUrl });
         }
@@ -67,6 +75,7 @@ namespace SemesterProject.IdentityServer.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
+
             if (!ModelState.IsValid)
             {
                 return View(registerViewModel);
@@ -84,15 +93,110 @@ namespace SemesterProject.IdentityServer.Controllers
 
             if (result.Succeeded)
             {
-                await _signInManager.PasswordSignInAsync(user.UserName, registerViewModel.Password, false, false);
                 List<Claim> claims = new List<Claim> {
                     new Claim("FirstName", user.FirstName),
                     new Claim("LastName", user.LastName)
                 };
                 await _userManager.AddClaimsAsync(user, claims);
-                return Redirect(registerViewModel.ReturnUrl);
             }
-            return View(new RegisterViewModel { ReturnUrl = registerViewModel.ReturnUrl });
+
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = Url.Action(
+                        "ConfirmEmail",
+                        "Auth",
+                        values: new { userId = user.Id, code = code, redirectUrl = registerViewModel.ReturnUrl },
+                        protocol: Request.Scheme);
+
+            await _emailSender.SendEmailAsync(registerViewModel.Email, "MyFace confirm email",
+                       $"Hi {user.FirstName} {user.LastName}, Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+
+            return RedirectToAction("EmailConfirmation");
+        }
+        public async Task<IActionResult> ConfirmEmail(Guid userId, string code, string redirectUrl)
+        {
+            if (userId == Guid.Empty || string.IsNullOrWhiteSpace(code))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+            {
+                return Redirect(redirectUrl);
+            }
+            return View();
+        }
+        public IActionResult EmailConfirmation()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword(string returnUrl)
+        {
+            return View(new ForgotPasswordModel { ReturnUrl = returnUrl });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordModel forgotPasswordModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(forgotPasswordModel.Email);
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                {
+                    // Don't reveal that the user does not exist or is not confirmed
+                    return RedirectToAction("./ForgotPasswordConfirmation");
+                }
+
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                var callbackUrl = Url.Action(
+                            "ResetPassword",
+                            "Auth",
+                            values: new { userId = user.Id, code = code, redirectUrl = forgotPasswordModel.ReturnUrl },
+                            protocol: Request.Scheme);
+
+                await _emailSender.SendEmailAsync(forgotPasswordModel.Email, "MyFace reset password email",
+                           $"Hi, you can reset your password <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                return RedirectToAction("ForgotPasswordConfirmation");
+            }
+            return View(forgotPasswordModel);
+        }
+        [HttpGet]
+        public IActionResult ResetPassword(Guid userId, string code, string redirectUrl)
+        {
+            if (userId == Guid.Empty || string.IsNullOrWhiteSpace(code))
+            {
+                return NotFound();
+            }
+            return View(new ResetPasswordModel { Code = code, Password = null, ConfirmPassword = null, ReturnUrl = redirectUrl, UserId = userId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel resetPasswordModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(resetPasswordModel.UserId.ToString());
+                var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(resetPasswordModel.Code));
+                var response = await _userManager.ResetPasswordAsync(user, code, resetPasswordModel.Password);
+                if (response.Succeeded)
+                {
+                    return Redirect(resetPasswordModel.ReturnUrl);
+                }
+            }
+            return RedirectToAction("Login/",new {
+                returnUrl = resetPasswordModel.ReturnUrl});
+        }
+        public IActionResult ForgotPasswordConfirmation()
+        {
+            return View();
         }
     }
 }

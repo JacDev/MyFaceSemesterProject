@@ -34,12 +34,14 @@
             </div>
 
             <div class="row">
-                <div class="btn-group col-6 offset-3">
+                <div class="btn-group col-6 offset-3 mb-1">
                     <input type="submit" class="btn btn-success text-center" value="Login" />
                     &nbsp;
                     <a asp-controller="Auth" asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl" class="btn btn-success text-center">Register</a>
+
                 </div>
             </div>
+            <a asp-controller="Auth" asp-action="ForgotPassword" asp-route-returnUrl="@Model.ReturnUrl" class="offset-7 ">Forgot password?</a>
         </form>
     </div>
 </div>

@@ -6,12 +6,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SemesterProject.IdentityServer.Data;
 using SemesterProject.IdentityServer.Entities;
+using SemesterProject.IdentityServer.Services;
 
 namespace SemesterProject.IdentityServer
 {
@@ -44,6 +46,7 @@ namespace SemesterProject.IdentityServer
 				config.Password.RequireUppercase = false;
 				config.Password.RequiredUniqueChars = 0;
 				config.Password.RequireLowercase = false;
+				config.SignIn.RequireConfirmedEmail = true;
 
 			})
 				.AddEntityFrameworkStores<AppDbContext>()
@@ -54,6 +57,7 @@ namespace SemesterProject.IdentityServer
 				config.Cookie.Name = "IdentityServer.Cookie";
 				config.LoginPath = "/Auth/Login";
 				config.LogoutPath = "/Auth/Logout";
+				
 			});
 
 			//configuration database
@@ -72,7 +76,7 @@ namespace SemesterProject.IdentityServer
 						  sql => sql.MigrationsAssembly(assembly));
 				})
 				.AddDeveloperSigningCredential(); //add rsa key
-
+			services.AddTransient<IEmailSender, EmailSender>();
 
 		}
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
