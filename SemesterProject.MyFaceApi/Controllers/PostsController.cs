@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SemesterProject.ApiData.Entities;
 using SemesterProject.ApiData.Models;
 using SemesterProject.ApiData.Repository;
@@ -20,8 +21,12 @@ namespace SemesterProject.MyFaceApi.Controllers
     {
         private readonly IPostRepository _postRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger<PostsController> _logger;
         private readonly IMapper _mapper;
-        public PostsController(IPostRepository postRepository, IMapper mapper, IUserRepository userRepository)
+        public PostsController(IPostRepository postRepository,
+            IMapper mapper, 
+            IUserRepository userRepository,
+            ILogger<PostsController> logger)
         {
             _postRepository = postRepository ??
                 throw new ArgumentNullException(nameof(postRepository));
@@ -29,6 +34,7 @@ namespace SemesterProject.MyFaceApi.Controllers
                 throw new ArgumentNullException(nameof(mapper));
             _userRepository = userRepository ??
                 throw new ArgumentNullException(nameof(userRepository));
+            _logger = logger;
         }
         [HttpOptions]
         public IActionResult GetPostsOpitons()
@@ -40,6 +46,8 @@ namespace SemesterProject.MyFaceApi.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Post>> GetPosts(Guid userId)
         {
+            var userID = User.Claims.FirstOrDefault(a => a.Type == "sub")?.Value;
+            _logger.LogInformation("{UserId} in api", userID);
             IEnumerable<Post> userPosts = _postRepository.GetUserPosts(userId);
             return Ok(userPosts);
         }

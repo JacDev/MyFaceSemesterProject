@@ -50,12 +50,22 @@ namespace SemesterProject.ApiData.Repository
 			{
 				throw new ArgumentNullException(nameof(notificationId));
 			}
-			var notificationToDelete = _appDbContext.Notifications.FirstOrDefault(s => s.Id == notificationId);
-			if (notificationToDelete == null)
+			var notificationReturn = _appDbContext.Notifications.FirstOrDefault(s => s.Id == notificationId);
+			if (notificationReturn == null)
 			{
-				throw new ArgumentNullException(nameof(notificationToDelete));
+				throw new ArgumentNullException(nameof(notificationReturn));
 			}
-			return notificationToDelete;
+			return notificationReturn;
+		}
+		public Notification GetNotification(Guid userId, Guid friendId, Guid eventId)
+		{
+			if (userId == Guid.Empty || friendId == Guid.Empty || eventId == Guid.Empty)
+			{
+				throw new ArgumentNullException(nameof(userId));
+			}
+			var notificationReturn = _appDbContext.Notifications.FirstOrDefault(s => s.FromWho == friendId && s.UserId == userId && s.EventId == eventId);
+
+			return notificationReturn;
 		}
 
 		public IQueryable<Notification> GetUserNotifications(Guid userId)

@@ -3,23 +3,21 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SemesterProject.MyFaceApi.Migrations
 {
-    public partial class Init : Migration
+    public partial class AddedConversation : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Messages",
+                name: "Conversations",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Text = table.Column<string>(nullable: true),
-                    When = table.Column<DateTime>(nullable: false),
-                    FromWho = table.Column<Guid>(nullable: false),
-                    ToWho = table.Column<Guid>(nullable: false)
+                    FirstUser = table.Column<Guid>(nullable: false),
+                    SecondUser = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.PrimaryKey("PK_Conversations", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -33,6 +31,28 @@ namespace SemesterProject.MyFaceApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Text = table.Column<string>(nullable: true),
+                    When = table.Column<DateTime>(nullable: false),
+                    FromWho = table.Column<Guid>(nullable: false),
+                    ToWho = table.Column<Guid>(nullable: false),
+                    ConversationId = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -62,7 +82,7 @@ namespace SemesterProject.MyFaceApi.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     WhenAdded = table.Column<DateTime>(nullable: false),
-                    Text = table.Column<string>(nullable: true),
+                    Text = table.Column<string>(nullable: false),
                     UserId = table.Column<Guid>(nullable: false),
                     ImagePath = table.Column<string>(nullable: true),
                     ImageFullPath = table.Column<string>(nullable: true)
@@ -139,6 +159,11 @@ namespace SemesterProject.MyFaceApi.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Messages_ConversationId",
+                table: "Messages",
+                column: "ConversationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Notifications_UserId",
                 table: "Notifications",
                 column: "UserId");
@@ -175,6 +200,9 @@ namespace SemesterProject.MyFaceApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Relations");
+
+            migrationBuilder.DropTable(
+                name: "Conversations");
 
             migrationBuilder.DropTable(
                 name: "Posts");

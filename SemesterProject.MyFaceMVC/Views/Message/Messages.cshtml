@@ -1,15 +1,23 @@
 ﻿@model IEnumerable<MessagesWithUserData>
 
-@{
-
-}
     <div class="col-12 border p-3 mt-3">
         @foreach (var message in Model)
         {
-            @message.User.FirstName @message.User.LastName @message.Message.Text
+            var toWho = ViewData["userId"].ToString() == message.Message.ToWho.ToString() ? message.Message.FromWho : message.Message.ToWho;
+            <a asp-controller="Message" asp-action="Index" asp-route-friendId="@toWho">
+                <div class="d-flex border mb-1">
+                    <div class="p-2">
+                        @message.User.FirstName @message.User.LastName
+                    </div>
+                    <div class="p-2 bg-transparent">
+                        @message.Message.Text
+                    </div>
+                    <div class="p-2 ml-auto bg-light">
+                        <span class="p-2">@message.Message.When</span>
+                    </div>
+                </div>
+            </a>
         }
-
-
-
-
     </div>
+
+

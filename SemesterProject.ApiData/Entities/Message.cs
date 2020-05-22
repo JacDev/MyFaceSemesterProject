@@ -11,5 +11,6 @@ namespace SemesterProject.ApiData.Entities
 		public DateTime When { get; set; }
 		public Guid FromWho { get; set; }
 		public Guid ToWho { get; set; }
+		public Guid ConversationId { get; set; }
 	}
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace SemesterProject.ApiData.Repository
 {
@@ -25,7 +26,20 @@ namespace SemesterProject.ApiData.Repository
 			{
 				throw new ArgumentNullException(nameof(message.FromWho));
 			}
+			var conversation = _appDbContext.Conversations.FirstOrDefault(x => x.FirstUser == message.ToWho && x.SecondUser == message.FromWho
+			|| x.FirstUser == message.FromWho && x.SecondUser == message.ToWho);
 
+			if (conversation == null)
+			{
+				conversation = new Conversation
+				{
+					FirstUser = message.ToWho,
+					SecondUser = message.FromWho
+				};
+				_appDbContext.Conversations.Add(conversation);
+				
+			}
+			message.ConversationId = conversation.Id;
 			await _appDbContext.Messages.AddAsync(message);
 			await _appDbContext.SaveAsync();
 		}
@@ -65,18 +79,20 @@ namespace SemesterProject.ApiData.Repository
 		}
 		public IEnumerable<Message> GetLastMessages(Guid userId)
 		{
-			var lastMessages = _appDbContext.Messages.Where(x => x.ToWho == userId || x.FromWho == userId);
+			var userConversations = _appDbContext.Conversations.Where(x => x.FirstUser == userId
+			|| x.SecondUser == userId).Select(x=>x.Messages);
+
+			List<Message> messagesToReturn = new List<Message>();
+			foreach(var conv in userConversations)
+			{
+				messagesToReturn.AddRange(conv.OrderBy(x => x.When).Take(1));
+			}
 
 
-
-
-
-
-
-			return lastMessages;
+			return messagesToReturn;
 		}
 
-		public IQueryable<Message> GetUserMessagesWith(Guid userId, Guid friendId)
+		public IEnumerable<Message> GetUserMessagesWith(Guid userId, Guid friendId)
 		{
 			if (userId == Guid.Empty)
 			{
@@ -88,11 +104,21 @@ namespace SemesterProject.ApiData.Repository
 			}
 
 			//null if no messages
-			var messagesToReturn = _appDbContext.Messages.Where(
-				m => m.FromWho == userId && m.ToWho == friendId
-				|| m.FromWho == friendId && m.ToWho == userId);
+			Conversation conversation = _appDbContext.Conversations.Include(nameof(_appDbContext.Messages)).FirstOrDefault(
+				m => m.FirstUser == userId && m.SecondUser == friendId
+				|| m.FirstUser == friendId && m.SecondUser == userId);
+			if(conversation == null)
+			{
+				conversation = new Conversation
+				{
+					FirstUser = userId,
+					SecondUser = friendId,
+					Messages = new List<Message>()
+				};
+				_appDbContext.Conversations.Add(conversation);				
+			}
 
-			return messagesToReturn;
+			return conversation.Messages.ToList(); ;
 		}
 	}
 }

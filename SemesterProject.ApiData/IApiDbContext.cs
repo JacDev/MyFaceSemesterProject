@@ -13,6 +13,7 @@ namespace SemesterProject.ApiData.AppDbContext
 		DbSet<Notification> Notifications { get; set; }
 		DbSet<PostLike> PostLikes { get; set; }
 		DbSet<PostComment> PostComments { get; set; }
+		DbSet<Conversation> Conversations { get; set; }
 		Task<int> SaveAsync();
 	}
 }

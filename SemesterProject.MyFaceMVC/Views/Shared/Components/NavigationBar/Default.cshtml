@@ -3,7 +3,6 @@
     Layout = null;
 }
 
-@*d-sm-inline-flex flex-sm-row-reverse*@
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-success border-bottom box-shadow mb-3">
     <div class="container">
         <a href="/"><img src="~/images/Logo48px.png" class="rounded"/></a>
@@ -12,56 +11,53 @@
             <ul class="navbar-nav">
                 <li class="nav-item flex-fill">
                     <h5>
-                        <a class="nav-link text-white text-center" asp-area="" asp-controller="Profile" asp-action="Index">Profile</a>
+                        <a class="nav-link text-white text-center" asp-area="" asp-controller="Profile" asp-action="Index"><i class="far fa-id-badge fa-lg px-4"></i></a>
                     </h5>
                 </li>
                 <li class="nav-item flex-fill">
                     <h5>
                         <a class="nav-link text-white" asp-area="" asp-controller="Friends" asp-action="ShowFriends">
-                            Friends
-                            <span class="badge badge-light">@Model.FriendsCounter</span>
+                            <i class="fas fa-users fa-lg px-4">
+                                <span class="badge badge-light">
+                                    @Model.FriendsCounter
+                            </span>
+                            </i>
                         </a>
                     </h5>
                 </li>
                 <li class="nav-item flex-fill">
                     <h5>
-                        <a class="nav-link text-white" asp-area="" asp-controller="Message" asp-action="Messages">Messages</a>
+                        <a class="nav-link text-white" asp-area="" asp-controller="Message" asp-action="Messages"><i class="far fa-comment-dots fa-lg px-4"></i></a>
                     </h5>
                 </li>
                 <li class="nav-item flex-fill">
                     <h5>
-                        <a class="nav-link text-white" asp-area="" asp-controller="Friends" asp-action="FindFriends">Find friends</a>
+                        <a class="nav-link text-white" asp-area="" asp-controller="Friends" asp-action="FindFriends"><i class="fas fa-search fa-lg px-4"></i></a>
                     </h5>
                 </li>
                 <li class="nav-item flex-fill">
                     <h5>
                         <a class="nav-link text-white" asp-area="" asp-controller="Profile" asp-action="Notifications">
-                            Notifications
-                            @if (Model.NewNotificationsCounter == 0)
-                            {
-                                <span class="badge badge-light" id="notifications">@Model.NewNotificationsCounter</span>
-                            }
-                            else
-                            {
-                                <span class="badge badge-danger" id="notifications">@Model.NewNotificationsCounter</span>
-                            }
-                            <input type="hidden" id="proba" value="Increment Value" />
+                            <i class="fas fa-bell fa-lg px-4">
+                                @if (Model.NewNotificationsCounter == 0)
+                                {
+                                    <span class="badge badge-light" id="notifications">@Model.NewNotificationsCounter</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger" id="notifications">@Model.NewNotificationsCounter</span>
+                                }
+                            </i>
                         </a>
                     </h5>
                 </li>
 
-                @*<li class="nav-item flex-fill">
-            <h5>
-                <a class="nav-link text-white" asp-controller="Profile" asp-action="AddPicture">Add Picture</a>
-            </h5>
-        </li>*@
-
                 <li class="nav-item flex-fill">
                     <div class="btn-group">
                         <h5>
-                            <a class="nav-link text-white" asp-controller="Profile" asp-action="Settings">Settings</a>
+                            <a class="nav-link text-white" asp-controller="Profile" asp-action="Settings"><i class="fas fa-cogs fa-lg pl-4"></i></a>
                         </h5>
-                        <a class="nav-link text-dark dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></a>
+                        <a class="nav-link text-dark dropdown-toggle dropdown-toggle-split pr-4" data-toggle="dropdown"></a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="#">My profile</a>
                             <a class="dropdown-item" href="#">Account settings</a>
@@ -70,7 +66,7 @@
                 </li>
                 <li class="nav-item flex-fill">
                     <h5>
-                        <a class="nav-link text-white" asp-area="" asp-controller="Profile" asp-action="Logout">Log out</a>
+                        <a class="nav-link text-white" asp-area="" asp-controller="Profile" asp-action="Logout"><i class="fas fa-sign-out-alt fa-lg px-4"></i></a>
                     </h5>
                 </li>
             </ul>

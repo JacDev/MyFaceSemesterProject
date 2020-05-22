@@ -47,12 +47,19 @@ namespace SemesterProject.MyFaceApi.Controllers
 
 			return Ok(_mapper.Map<IEnumerable<UserToReturnWithCounters>>(friends));
 		}
+		[HttpGet("{friendId}")]
+		public ActionResult<bool> CheckIfAreFriends(Guid userId, Guid friendId)
+		{
+			if (userId == Guid.Empty || friendId == Guid.Empty)
+			{
+				return NotFound();
+			}
+			return Ok(_relationRepository.CheckIfFriends(userId, friendId));
+		}
 
 		[HttpPost]
 		public async Task<ActionResult> AddFriendd(Guid userId, [FromBody] RelationToAdd relation)
 		{
-	 
-
 			if (userId == Guid.Empty || relation==null)
 			{
 				return NotFound();

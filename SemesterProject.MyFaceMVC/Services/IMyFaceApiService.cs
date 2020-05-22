@@ -17,14 +17,17 @@ namespace SemesterProject.MyFaceMVC.Services
 		Task<HttpResponseMessage> AddPostComment(string userId, PostComment postComment);
 		Task<HttpResponseMessage> AddPostLike(string userId, PostLike postLike);
 		Task<HttpResponseMessage> AddUserIfNotExist(ClaimsPrincipal userPrincipal);
+		Task<bool> CheckIfAreFriends(Guid userId, Guid friendId);
 		Task<HttpResponseMessage> DeleteFriend(string userId, string friendId);
 		Task<HttpResponseMessage> DeletePost(string userId, string postId);
 		Task<HttpResponseMessage> DeletePostComment(string postId, string commentId, string userId);
 		Task<HttpResponseMessage> DeletePostLike(string postId, string fromWho, string userId);
+		Task<HttpResponseMessage> DeleteNotification(string userId, string notificationId);
 		Task<List<BasicUserData>> GetFoundUsers(string searchName);
 		Task<List<BasicUserData>> GetFriends(string userId);
 		Task<IEnumerable<Message>> GetMessages(string userId);
 		Task<IEnumerable<Message>> GetMessagesWith(string userId, string friendId);
+		Task<Notification> GetNotification(Guid userId, Guid eventId, Guid friendId);
 		Task<IEnumerable<NotificationWithBasicFromWhoData>> GetNotifications(string userId);
 		Task<Post> GetPost(string userId, string postId);
 		Task<List<Post>> GetPosts(string userId);

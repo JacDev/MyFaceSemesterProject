@@ -16,6 +16,7 @@ namespace SemesterProject.ApiData.AppDbContext
 		public DbSet<Notification> Notifications { get; set; }
 		public DbSet<PostLike> PostLikes { get; set; }
 		public DbSet<PostComment> PostComments { get; set; }
+		public DbSet<Conversation> Conversations { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -23,7 +24,14 @@ namespace SemesterProject.ApiData.AppDbContext
 		}
 		public async Task<int> SaveAsync()
 		{
-			return await SaveChangesAsync();
+			try
+			{
+				return await SaveChangesAsync();
+			}
+			catch
+			{
+				throw;
+			}
 		}
 	}
 }

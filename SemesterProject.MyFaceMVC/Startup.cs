@@ -47,7 +47,7 @@ namespace SemesterProject.MyFaceMVC
 						options.ClaimActions.MapUniqueJsonKey("LastName", "LastName");
 
 						//options.GetClaimsFromUserInfoEndpoint = true;
-						options.Scope.Add("openid");					
+						options.Scope.Add("openid");
 						options.Scope.Add("profile");
 						options.Scope.Add("MyFaceApi");
 						options.Scope.Add("userinfo");
@@ -55,7 +55,7 @@ namespace SemesterProject.MyFaceMVC
 
 			services.AddControllersWithViews();
 			services.AddHttpContextAccessor();
-			
+
 			services.AddHttpClient<IMyFaceApiService, MyFaceApiService>(
 				async (services, client) =>
 				{
@@ -67,7 +67,7 @@ namespace SemesterProject.MyFaceMVC
 
 			services.AddHttpContextAccessor();
 			services.AddDbContext<IOnlineUsers, ChatOnlineUsersContext>(
-				options=> options.UseInMemoryDatabase("OnlineUsers")
+				options => options.UseInMemoryDatabase("OnlineUsers")
 				);
 
 			services.AddScoped<IOnlineUsersRepository, OnlineUsersRepository>();
@@ -77,15 +77,10 @@ namespace SemesterProject.MyFaceMVC
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
-			else
-			{
-				app.UseExceptionHandler("/Home/Error");
-				app.UseHsts();
-			}
+
+			app.UseExceptionHandler("/Home/Error");
+			app.UseHsts();
+
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
 
@@ -100,7 +95,6 @@ namespace SemesterProject.MyFaceMVC
 				endpoints.MapControllerRoute(
 					name: "default",
 					pattern: "{controller=Profile}/{action=Index}/{id?}");
-				endpoints.MapHub<ChatHub>("/chatHub");
 				endpoints.MapHub<NotificationHub>("/notificationHub");
 			});
 		}

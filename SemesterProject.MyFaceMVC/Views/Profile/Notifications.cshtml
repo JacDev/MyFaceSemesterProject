@@ -16,28 +16,51 @@
     }
 </h1>
 
-<table class="table">
-    <tbody>
+
+
+<div class="col-12 border p-3 mt-3">
+    <div>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                     <span>Friend Requiest</span>
 
-                </td>
-                <td>
-                    From <a asp-controller="Profile" asp-action="Profile" asp-route-id="@item.Notification.FromWho" > @item.User.FirstName @item.User.LastName</a>
-                </td>
-                <td>
-                    Do @item.Notification.UserId
-                </td>
-                <td>
-                    Od @item.Notification.FromWho
-                </td>
-                <td>
-                    <a asp-controller="Friends" asp-action="AcceptFriendRequiest" asp-route-notificationId="@item.Notification.Id" asp-route-friendId="@item.Notification.FromWho">Accept</a>
-                </td>
-            </tr>
+            <div class="d-flex border mb-1">
+                <div class="p-2 bg-info text-white">
+                    @item.Notification.NotificationType
+                </div>
+                <div class="p-2 bg-transparent">
+                    <a asp-controller="Friends" asp-action="ViewProfile" asp-route-id="@item.Notification.FromWho">From @item.User.FirstName @item.User.LastName</a>
+                </div>
+                <div class="p-2 ml-auto bg-light">
+
+
+
+                    @switch (item.Notification.NotificationType)
+                    {
+                        case NotificationType.FriendRequiest:
+                            {
+                                <a asp-controller="Friends" asp-action="AcceptFriendRequiest" asp-route-notificationId="@item.Notification.Id" asp-route-friendId="@item.Notification.FromWho"> <i class="fas fa-user-check fa-lg mr-1"></i> </a>
+                                <a asp-controller="Friends" asp-action="RejectFriendRequiest" asp-route-notificationId="@item.Notification.Id" asp-route-userId="@item.Notification.FromWho"> <i class="fas fa-user-alt-slash fa-lg"></i> </a>
+                                break;
+                            }
+                        case NotificationType.Message:
+                            {
+                                <a asp-controller="Message" asp-action="Index" asp-route-friendId="@item.Notification.FromWho"> <i class="far fa-comment-dots fa-2x"></i> </a>
+                                break;
+                            }
+                        case NotificationType.Like:
+                            {
+                                <a asp-controller="Post" asp-action="ShowComments" asp-route-userId="@item.Notification.UserId" asp-route-postId="@item.Notification.EventId" class="btn border"> <i class="far fa-thumbs-up"></i></a>
+                                break;
+                            }
+                        case NotificationType.Comment:
+                            {
+                                <a asp-controller="Post" asp-action="ShowComments" asp-route-userId="@item.Notification.UserId" asp-route-postId="@item.Notification.EventId" class="btn border">  <i class="far fa-comments"></i></a>
+                                break;
+                            }
+                    }
+                </div>
+        </div>
         }
-    </tbody>
-</table>
+
+    </div>
+</div>

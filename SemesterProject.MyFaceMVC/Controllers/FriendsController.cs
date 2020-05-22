@@ -40,32 +40,48 @@ namespace SemesterProject.MyFaceMVC.Controllers
         public async Task<IActionResult> FindFriends(string searchName)
         {
             var foundUsers = await _myFaceApiService.GetFoundUsers(searchName);
-
+            ViewData["userId"] = _userId.ToString();
             return View(foundUsers);
         }
         public async Task<IActionResult> AddFriend(Guid userId)
         {
-            await _myFaceApiService.AddNotification(new NotificationToAdd
+            var x = await _myFaceApiService.CheckIfAreFriends(Guid.Parse(_userId), userId);
+            if (!x)
             {
-                FromWho = Guid.Parse(_userId),
-                UserId = userId,
-                WasSeen = false
-            });
+                await _myFaceApiService.AddNotification(new NotificationToAdd
+                {
+                    FromWho = Guid.Parse(_userId),
+                    UserId = userId,
+                    WasSeen = false,
+                    NotificationType = NotificationType.FriendRequiest
+                });
+            }
             return RedirectToAction(nameof(FindFriends));
         }
         public async Task<IActionResult> AcceptFriendRequiest(Guid notificationId, Guid friendId)
         {
             if (notificationId == Guid.Empty)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             await _myFaceApiService.MarkNotificationAsSeen(_userId, notificationId);
-            await _myFaceApiService.AddFriend(_userId, new RelationToAdd
+            var x = await _myFaceApiService.AddFriend(_userId, new RelationToAdd
             {
                 FriendId = friendId,
                 SinceWhen = DateTime.Now
             });
+
+            return RedirectToAction("Notifications", "Profile");
+        }
+        public async Task<IActionResult> RejectFriendRequiest(Guid notificationId, Guid userId)
+        {
+            if (notificationId == Guid.Empty)
+            {
+                return NotFound();
+            }
+
+            await _myFaceApiService.DeleteNotification(userId.ToString(), notificationId.ToString());
 
             return RedirectToAction("Notifications", "Profile");
         }
@@ -86,13 +102,5 @@ namespace SemesterProject.MyFaceMVC.Controllers
             ViewData["userId"] = _userId.ToString();
             return View(userToView);
         }
-        //public void AddComment(Guid postId)
-        //{
-
-        //}
-        //public void UndoComment(Guid postId)
-        //{
-
-        //}
     }
 }

@@ -57,8 +57,11 @@ namespace SemesterProject.MyFaceMVC.Controllers
                 {
                     Message = message,
                     User = await _myFaceApiService.GetUser(message.FromWho.ToString())
+       
                 });
             }
+
+            ViewData["userId"] = _userId.ToString();
             return View(messagesToReturn);
         }
     }

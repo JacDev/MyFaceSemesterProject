@@ -1,6 +1,7 @@
 ﻿using SemesterProject.ApiData.AppDbContext;
 using SemesterProject.ApiData.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,7 +16,7 @@ namespace SemesterProject.ApiData.Repository
 		}
 		public async Task AddRelationAsync(Guid userId, Guid friendId)
 		{
-			if(userId == Guid.Empty)
+			if (userId == Guid.Empty)
 			{
 				throw new ArgumentNullException(nameof(userId));
 			}
@@ -23,7 +24,7 @@ namespace SemesterProject.ApiData.Repository
 			{
 				throw new ArgumentNullException(nameof(friendId));
 			}
-			if(_appDbContext.Relations.Any(
+			if (_appDbContext.Relations.Any(
 				s => s.UserId == userId && s.FriendId == friendId
 				|| s.UserId == friendId && s.FriendId == userId))
 			{
@@ -47,22 +48,33 @@ namespace SemesterProject.ApiData.Repository
 			{
 				throw new ArgumentNullException(nameof(friendId));
 			}
-			var relationToDelete =_appDbContext.Relations.FirstOrDefault(
+			var relationToDelete = _appDbContext.Relations.FirstOrDefault(
 				s => s.UserId == userId && s.FriendId == friendId
 				|| s.UserId == friendId && s.FriendId == userId);
-			if(relationToDelete == null)
+			if (relationToDelete == null)
 			{
 				throw new ArgumentNullException(nameof(relationToDelete));
 			}
 			_appDbContext.Relations.Remove(relationToDelete);
 			await _appDbContext.SaveAsync();
-		}		public IQueryable<Relation> GetUserRelations(Guid userId)
+		}
+		public List<Relation> GetUserRelations(Guid userId)
 		{
 			if (userId == Guid.Empty)
 			{
 				throw new ArgumentNullException(nameof(userId));
 			}
-			return _appDbContext.Relations.Where(s => s.UserId == userId || s.FriendId == userId);
+			return _appDbContext.Relations.Where(s => s.UserId == userId || s.FriendId == userId).ToList(); ;
+		}
+		public bool CheckIfFriends(Guid firstUser, Guid secondUser)
+		{
+			if (_appDbContext.Relations.Any(
+				s => s.UserId == firstUser && s.FriendId == secondUser
+				|| s.UserId == secondUser && s.FriendId == firstUser))
+			{
+				return true;
+			}
+			return false;
 		}
 	}
 }

@@ -12,10 +12,10 @@ namespace SemesterProject.ApiData.Repository
 		Task AddUserAcync(User user);
 		Task DeleteUserAsync(User user);
 		Task<User> GetUserAsync(Guid userId);
-		IEnumerable<User> GetUsers(IEnumerable<Guid> usersId);
-		IQueryable<User> GetUsers();
+		List<User> GetUsers(IEnumerable<Guid> usersId);
+		List<User> GetUsers();
 		Task UpdateUserAsync(User user);
 		bool CheckIfUserExists(Guid userId);
-		IEnumerable<User> GetUsers(string searchString);
+		List<User> GetUsers(string searchString);
 	}
 }

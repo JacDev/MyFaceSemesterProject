@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SemesterProject.ApiData.Models;
 using SemesterProject.MyFaceMVC.Services;
 using SemesterProject.MyFaceMVC.ViewModels;
@@ -15,10 +16,12 @@ namespace SemesterProject.MyFaceMVC.Controllers
     public class ProfileController : Controller
     {
         private readonly IMyFaceApiService _myFaceApiService;
+        private readonly ILogger<ProfileController> logger;
         private readonly string _userId;
-        public ProfileController(IMyFaceApiService myFaceApiService, IHttpContextAccessor httpContextAccessor)
+        public ProfileController(IMyFaceApiService myFaceApiService, IHttpContextAccessor httpContextAccessor, ILogger<ProfileController> logger)
         {
             _myFaceApiService = myFaceApiService;
+            this.logger = logger;
             _myFaceApiService.AddUserIfNotExist(httpContextAccessor.HttpContext.User).GetAwaiter();
             _userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
         }

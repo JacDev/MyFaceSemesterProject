@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SemesterProject.ApiData.Entities;
 using SemesterProject.ApiData.Models;
@@ -32,6 +31,7 @@ namespace SemesterProject.MyFaceApi.Controllers
             Response.Headers.Add("Allow", "GET,OPTIONS,POST");
             return Ok();
         }
+
         [HttpGet]
         public ActionResult<IEnumerable<Message>> GetMessage(Guid userId)
         {
@@ -59,6 +59,7 @@ namespace SemesterProject.MyFaceApi.Controllers
 
             return Ok(userMessages);
         }
+
         [HttpPost]
         public async Task<ActionResult> AddMessage(Guid userId, [FromBody] MessageToAdd message)
         {
@@ -75,6 +76,5 @@ namespace SemesterProject.MyFaceApi.Controllers
             await _messageRepository.AddMessageAsync(messageToAdd);
             return NoContent();
         }
-
     }
 }

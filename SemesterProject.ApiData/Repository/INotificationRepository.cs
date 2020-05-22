@@ -11,6 +11,7 @@ namespace SemesterProject.ApiData.Repository
 		Task AddNotificationAsync(Notification notification);
 		Task DeleteNotificationAsync(Guid notificationId);
 		Notification GetNotification(Guid notificationId);
+		Notification GetNotification(Guid userId, Guid friendId, Guid eventId);
 		Task MarkNotificationAsSeen(Guid notificationId);
 	}
 }

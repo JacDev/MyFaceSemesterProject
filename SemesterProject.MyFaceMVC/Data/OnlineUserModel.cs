@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace SemesterProject.MyFaceMVC.Data
 {
@@ -12,8 +8,6 @@ namespace SemesterProject.MyFaceMVC.Data
 		public string Id { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
-		[AllowNull]
-		public string ChatConnectionId { get; set; } = string.Empty;
 		[AllowNull]
 		public string NotificationConnectionId { get; set; } = string.Empty;
 	}

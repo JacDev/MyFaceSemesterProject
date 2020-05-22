@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SemesterProject.ApiData.Entities;
 using SemesterProject.ApiData.Models;
@@ -31,6 +29,20 @@ namespace SemesterProject.MyFaceApi.Controllers
 		{
 			Response.Headers.Add("Allow", "GET,OPTIONS,POST");
 			return Ok();
+		}
+		[HttpGet("{eventId}/{friendId}")]
+		public ActionResult<Notification> GetPost(Guid userId, Guid eventId, Guid friendId)
+		{
+			if (userId == Guid.Empty || eventId == Guid.Empty || friendId == Guid.Empty)
+			{
+				return NotFound();
+			}
+			Notification notificationToReturn = _notificationRepository.GetNotification(userId, friendId, eventId);
+			if (notificationToReturn == null)
+			{
+				return NotFound();
+			}
+			return Ok(notificationToReturn);
 		}
 
 		[HttpGet]
@@ -77,6 +89,17 @@ namespace SemesterProject.MyFaceApi.Controllers
 			}
 			await _notificationRepository.MarkNotificationAsSeen(notificationId);
 			return Ok();
+		}
+		[HttpDelete("{notificationId}")]
+		public async Task<ActionResult> DeleteNotification(Guid notificationId)
+		{
+			if (notificationId == Guid.Empty)
+			{
+				return NotFound();
+			}
+
+			await _notificationRepository.DeleteNotificationAsync(notificationId);
+			return NoContent();
 		}
 	}
 }

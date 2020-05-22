@@ -4,14 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SemesterProject.ApiData.AppDbContext;
 
-namespace SemesterProject.ApiData.Migrations
+namespace SemesterProject.MyFaceApi.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20200513134131_Init")]
-    partial class Init
+    [Migration("20200518104026_AddedConversation")]
+    partial class AddedConversation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,10 +20,30 @@ namespace SemesterProject.ApiData.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("SemesterProject.ApiData.Entities.Conversation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FirstUser")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SecondUser")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Conversations");
+                });
+
             modelBuilder.Entity("SemesterProject.ApiData.Entities.Message", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ConversationId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("FromWho")
@@ -41,6 +60,8 @@ namespace SemesterProject.ApiData.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ConversationId");
+
                     b.ToTable("Messages");
                 });
 
@@ -53,10 +74,10 @@ namespace SemesterProject.ApiData.Migrations
                     b.Property<Guid>("FromWho")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ToWho")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("NotificationType")
+                        .HasColumnType("int");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("WasSeen")
@@ -82,6 +103,7 @@ namespace SemesterProject.ApiData.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Text")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
@@ -106,20 +128,23 @@ namespace SemesterProject.ApiData.Migrations
                     b.Property<Guid>("FromWho")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PostId")
+                    b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("WhenAdded")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("PostComment");
+                    b.ToTable("PostComments");
                 });
 
-            modelBuilder.Entity("SemesterProject.ApiData.Entities.PostLikes", b =>
+            modelBuilder.Entity("SemesterProject.ApiData.Entities.PostLike", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -128,8 +153,11 @@ namespace SemesterProject.ApiData.Migrations
                     b.Property<Guid>("FromWho")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PostId")
+                    b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("WhenAdded")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -171,11 +199,20 @@ namespace SemesterProject.ApiData.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("SemesterProject.ApiData.Entities.Message", b =>
+                {
+                    b.HasOne("SemesterProject.ApiData.Entities.Conversation", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId");
+                });
+
             modelBuilder.Entity("SemesterProject.ApiData.Entities.Notification", b =>
                 {
                     b.HasOne("SemesterProject.ApiData.Entities.User", null)
                         .WithMany("Notifications")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SemesterProject.ApiData.Entities.Post", b =>
@@ -190,15 +227,19 @@ namespace SemesterProject.ApiData.Migrations
             modelBuilder.Entity("SemesterProject.ApiData.Entities.PostComment", b =>
                 {
                     b.HasOne("SemesterProject.ApiData.Entities.Post", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("PostId");
+                        .WithMany("PostComments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("SemesterProject.ApiData.Entities.PostLikes", b =>
+            modelBuilder.Entity("SemesterProject.ApiData.Entities.PostLike", b =>
                 {
                     b.HasOne("SemesterProject.ApiData.Entities.Post", null)
-                        .WithMany("Likes")
-                        .HasForeignKey("PostId");
+                        .WithMany("PostLikes")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SemesterProject.ApiData.Entities.Relation", b =>

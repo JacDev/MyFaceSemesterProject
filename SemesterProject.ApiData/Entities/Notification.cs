@@ -12,5 +12,6 @@ namespace SemesterProject.ApiData.Entities
 		public Guid FromWho { get; set; }
 		public Guid UserId { get; set; }
 		public NotificationType NotificationType { get; set; }
+		public Guid EventId { get; set; }
 	}
 }

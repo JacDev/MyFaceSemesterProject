@@ -6,38 +6,84 @@ using System.Threading.Tasks;
 
 namespace SemesterProject.MyFaceMVC.Services
 {
-	public static class HttpClientExtensions
-	{
-        public static Task<HttpResponseMessage> GetFromApi(this HttpClient httpClient, string url)
+    public static class HttpClientExtensions
+    {
+        public static Task<HttpResponseMessage> GetFromApiAsync(this HttpClient httpClient, string url)
         {
-            return httpClient.GetAsync(url);
+            try
+            {
+                return httpClient.GetAsync(url);
+            }
+            catch
+            {
+                throw;
+            }
         }
         public static Task<HttpResponseMessage> PostToApiAsJsonAsync<T>(this HttpClient httpClient, string url, T data)
         {
-            var dataAsString = JsonSerializer.Serialize(data);
-            var content = new StringContent(dataAsString);
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            return httpClient.PostAsync(url, content);
+            try
+            {
+                StringContent content = AddContent(data);
+                return httpClient.PostAsync(url, content);
+            }
+            catch
+            {
+                throw;
+            }
         }
         public static Task<HttpResponseMessage> PatchToApiAsJsonAsync<T>(this HttpClient httpClient, string url, T data)
         {
-            var dataAsString = JsonSerializer.Serialize(data);
-            var content = new StringContent(dataAsString);
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            return httpClient.PatchAsync(url, content);
+            try
+            {
+                StringContent content = AddContent(data);
+                return httpClient.PatchAsync(url, content);
+            }
+            catch
+            {
+                throw;
+            }
         }
         public static Task<HttpResponseMessage> DeleteFromApi(this HttpClient httpClient, string url)
         {
-            return httpClient.DeleteAsync(url);
+            try
+            {
+                return httpClient.DeleteAsync(url);
+            }
+            catch
+            {
+                throw;
+            }
         }
         public static async Task<T> ReadContentAs<T>(this HttpResponseMessage response)
         {
-            if (!response.IsSuccessStatusCode)
-                throw new ApplicationException("Something went wrong calling the API");
+            try
+            {
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new ApplicationException($"Something went wrong calling the API. HTTP code: {response.StatusCode}");
+                }
 
-            var dataAsString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            return JsonSerializer.Deserialize<T>(dataAsString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                string dataAsString = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<T>(dataAsString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        private static StringContent AddContent<T>(T data)
+        {
+            try
+            {
+                string dataAsString = JsonSerializer.Serialize(data);
+                StringContent content = new StringContent(dataAsString);
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                return content;
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }
