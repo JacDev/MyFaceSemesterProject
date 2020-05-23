@@ -1,4 +1,5 @@
 ﻿using SemesterProject.ApiData.Entities;
+using SemesterProject.ApiData.Helpers;
 using SemesterProject.ApiData.Models;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace SemesterProject.MyFaceMVC.Services
 		Task<List<BasicUserData>> GetFoundUsers(string searchName);
 		Task<List<BasicUserData>> GetFriends(string userId);
 		Task<IEnumerable<Message>> GetMessages(string userId);
-		Task<IEnumerable<Message>> GetMessagesWith(string userId, string friendId);
+		Task<PagedList<Message>> GetMessagesWith(string userId, string friendId, PaginationParams paginationParams);
 		Task<Notification> GetNotification(Guid userId, Guid eventId, Guid friendId);
 		Task<IEnumerable<NotificationWithBasicFromWhoData>> GetNotifications(string userId);
 		Task<Post> GetPost(string userId, string postId);

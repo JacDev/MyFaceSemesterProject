@@ -43,6 +43,7 @@ namespace SemesterProject.MyFaceApi
 					setupAction.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 				});
 
+
 			services.AddDbContext<IApiDbContext, ApiDbContext>(
 				options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 

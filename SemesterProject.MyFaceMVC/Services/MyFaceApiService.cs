@@ -6,6 +6,9 @@ using System.Linq;
 using SemesterProject.ApiData.Entities;
 using System.Collections.Generic;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http.Extensions;
+using SemesterProject.ApiData.Helpers;
+using System.Text.Json;
 
 namespace SemesterProject.MyFaceMVC.Services
 {
@@ -227,12 +230,18 @@ namespace SemesterProject.MyFaceMVC.Services
 		}
 		
 
-		public async Task<IEnumerable<Message>> GetMessagesWith(string userId, string friendId)
+		public async Task<PagedList<Message>> GetMessagesWith(string userId, string friendId, PaginationParams paginationParams)
 		{
 			try
 			{
-				HttpResponseMessage response = await _client.GetFromApiAsync($"api/users/{userId}/messages/{friendId}");
-				return await response.ReadContentAs<List<Message>>();
+				var urlParams = new QueryBuilder
+				{
+					{ nameof(paginationParams.PageNumber), paginationParams.PageNumber.ToString() },
+					{ nameof(paginationParams.PageSize), paginationParams.PageSize.ToString() }
+				};
+
+				HttpResponseMessage response = await _client.GetFromApiAsync($"api/users/{userId}/messages/{friendId}/{urlParams}");
+				return await response.ReadContentAs<PagedList<Message>>();
 			}
 			catch
 			{

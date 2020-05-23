@@ -24,11 +24,6 @@ namespace SemesterProject.IdentityServer
 
 			using (var scope = host.Services.CreateScope())
 			{
-				//var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-				//var user = new AppUser { UserName = "bob", Id="bob" };
-				//userManager.CreateAsync(user, "password").GetAwaiter().GetResult();
-				//userManager.AddClaimAsync(user, new Claim("rc.costam", "jakaswartosc")).GetAwaiter().GetResult();
-				//userManager.AddClaimAsync(user, new Claim("rc.api.costam", "api.jakaswartosc")).GetAwaiter().GetResult();
 
 				scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
 

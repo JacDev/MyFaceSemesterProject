@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using SemesterProject.ApiData.Helpers;
 
 namespace SemesterProject.ApiData.Repository
 {
@@ -92,7 +93,7 @@ namespace SemesterProject.ApiData.Repository
 			return messagesToReturn;
 		}
 
-		public IEnumerable<Message> GetUserMessagesWith(Guid userId, Guid friendId)
+		public PagedList<Message> GetUserMessagesWith(Guid userId, Guid friendId, PaginationParams paginationParams)
 		{
 			if (userId == Guid.Empty)
 			{
@@ -107,7 +108,7 @@ namespace SemesterProject.ApiData.Repository
 			Conversation conversation = _appDbContext.Conversations.Include(nameof(_appDbContext.Messages)).FirstOrDefault(
 				m => m.FirstUser == userId && m.SecondUser == friendId
 				|| m.FirstUser == friendId && m.SecondUser == userId);
-			if(conversation == null)
+			if (conversation == null)
 			{
 				conversation = new Conversation
 				{
@@ -115,10 +116,18 @@ namespace SemesterProject.ApiData.Repository
 					SecondUser = friendId,
 					Messages = new List<Message>()
 				};
-				_appDbContext.Conversations.Add(conversation);				
+				_appDbContext.Conversations.Add(conversation);
 			}
 
-			return conversation.Messages.ToList(); ;
+			var collection = conversation.Messages.OrderByDescending(x=>x.When).ToList();
+			if (collection == null)
+			{
+
+				return PagedList<Message>.Create(null, 0, 0);
+			}
+			return PagedList<Message>.Create(collection,
+			   paginationParams.PageNumber,
+			   paginationParams.PageSize);
 		}
 	}
 }

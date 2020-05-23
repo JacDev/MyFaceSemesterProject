@@ -1,6 +1,5 @@
 ﻿@model IEnumerable<MessagesWithUserData>
-
-    <div class="col-12 border p-3 mt-3">
+<div class="col-12 border p-3 mt-3">
         @foreach (var message in Model)
         {
             var toWho = ViewData["userId"].ToString() == message.Message.ToWho.ToString() ? message.Message.FromWho : message.Message.ToWho;
@@ -19,5 +18,3 @@
             </a>
         }
     </div>
-
-

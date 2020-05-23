@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SemesterProject.ApiData.Entities;
+using SemesterProject.ApiData.Helpers;
 using SemesterProject.ApiData.Models;
 using SemesterProject.MyFaceMVC.Services;
 using SemesterProject.MyFaceMVC.ViewModels;
@@ -27,23 +29,31 @@ namespace SemesterProject.MyFaceMVC.Controllers
 
         public async Task<IActionResult> Index(string friendId)
         {
-            if (!string.IsNullOrWhiteSpace(friendId))
+            try
             {
-                IEnumerable<Message> messages = await _myFaceApiService.GetMessagesWith(_userId, friendId);
-                var friend = await _myFaceApiService.GetUser(friendId);
-                ViewData["friendId"] = friendId;
-                ViewData["userId"] = _userId.ToString();
-                if (friend != null)
+                if (!string.IsNullOrWhiteSpace(friendId))
                 {
-                    ViewData["friendFirstName"] = friend.FirstName;
-                    ViewData["friendLastName"] = friend.LastName;
+                    PagedList<Message> messages = await _myFaceApiService.GetMessagesWith(_userId, friendId, new PaginationParams { PageNumber = 0, PageSize = 10 });
+                    var friend = await _myFaceApiService.GetUser(friendId);
+                    ViewData["friendId"] = friendId;
+                    ViewData["userId"] = _userId.ToString();
+                    if (friend != null)
+                    {
+                        ViewData["friendFirstName"] = friend.FirstName;
+                        ViewData["friendLastName"] = friend.LastName;
+                    }
+                    return View(messages);
                 }
-                return View(messages);
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return NotFound();
-            }          
+            }
         }
         public async Task<IActionResult> Messages()
         {

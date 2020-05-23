@@ -1,12 +1,7 @@
 ﻿using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
-using Microsoft.AspNetCore.Identity;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace SemesterProject.IdentityServer
 {
@@ -32,7 +27,6 @@ namespace SemesterProject.IdentityServer
 		public static IEnumerable<ApiResource> GetApis() => //jakie sa api i co mogą dostać
 			new List<ApiResource>
 			{
-				//new ApiResource("MyFaceApi", new [] {ClaimTypes.NameIdentifier, "UserInfo" })
 				new ApiResource("MyFaceApi")
 			};
 		public static IEnumerable<Client> GetClients() =>
@@ -58,12 +52,9 @@ namespace SemesterProject.IdentityServer
 
 					AlwaysIncludeUserClaimsInIdToken = true,
 
-					//add refresh_token
-					//AllowOfflineAccess = true,
-
-					//add page between client and identityserver to user can check what claims can by pass by idenserv
 					RequireConsent = false
 				}
 			};
 	}
 }
+			

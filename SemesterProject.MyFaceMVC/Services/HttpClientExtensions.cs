@@ -64,10 +64,12 @@ namespace SemesterProject.MyFaceMVC.Services
                 }
 
                 string dataAsString = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<T>(dataAsString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var responseData =  JsonSerializer.Deserialize<T>(dataAsString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return responseData;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 throw;
             }
         }

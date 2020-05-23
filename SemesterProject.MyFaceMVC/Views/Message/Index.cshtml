@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Message>
+﻿@model SemesterProject.ApiData.Helpers.PagedList<Message>
 @{
     ViewData["Title"] = ViewData["friendFirstName"].ToString() + ViewData["friendLastName"].ToString();
 }
@@ -9,6 +9,8 @@
     </h2>
 
     <div class="row">
+        <button type="button">See More</button>
+ 
         <ul class="col-md-12" id="messagesList">
             @if (Model != null)
             {
@@ -16,7 +18,7 @@
                 {
                     string offset;
 
-                    @if (message.ToWho == Guid.Parse(ViewData["userId"].ToString()))
+                    @if (message.FromWho == Guid.Parse(ViewData["userId"].ToString()))
                     {
                         offset = "col-md-6 offset-md-6";
                     }
@@ -51,6 +53,6 @@
 {
     <script>
 	var userId = "@ViewData["userId"]";
-	var friendId = "@ViewData["friendId"]";
+            var friendId = "@ViewData["friendId"]";
     </script>
 }
