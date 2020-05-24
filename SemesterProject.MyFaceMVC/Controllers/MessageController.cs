@@ -74,5 +74,9 @@ namespace SemesterProject.MyFaceMVC.Controllers
             ViewData["userId"] = _userId.ToString();
             return View(messagesToReturn);
         }
+        public IActionResult JsLogin()
+        {
+            return View();
+        }
     }
 }

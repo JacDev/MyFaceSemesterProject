@@ -68,7 +68,18 @@ namespace SemesterProject.MyFaceApi.Controllers
 
 				userMessages.PreviousPageLink = previousPageLink;
 				userMessages.NextPageLink = nextPageLink;
-				
+
+				var paginationMetadata = new
+				{
+					totalCount = userMessages.TotalCount,
+					pageSize = userMessages.PageSize,
+					currentPage = userMessages.CurrentPage,
+					totalPages = userMessages.TotalPages,
+					previousPageLink,
+					nextPageLink
+
+				};
+				Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
 			}
 
 			return Ok(userMessages);

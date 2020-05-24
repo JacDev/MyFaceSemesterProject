@@ -9,35 +9,39 @@
     </h2>
 
     <div class="row">
-        <button type="button">See More</button>
- 
-        <ul class="col-md-12" id="messagesList">
-            @if (Model != null)
-            {
-                @foreach (var message in Model.OrderBy(m => m.When))
+        <div>
+            <button onclick="callApi()">See More</button>
+        </div>
+
+        <div class="col-md-12" id="messageField">
+            <ul class="col-md-12" id="messagesList">
+                @if (Model != null)
                 {
-                    string offset;
-
-                    @if (message.FromWho == Guid.Parse(ViewData["userId"].ToString()))
+                    @foreach (var message in Model.OrderBy(m => m.When))
                     {
-                        offset = "col-md-6 offset-md-6";
-                    }
-                    else
-                    {
-                        offset = "col-md-6 offset-md-0";
-                    }
+                        string offset;
 
-                    <li class="row">
-                        <div class="@offset">
-                            <div class="container darker bg-primary">
-                                <p class="text-left text-white m-1">@message.Text</p>
-                                <span class="time-left text-light">@message.When.ToString("M/dd/yyyy hh:MM tt")</span>
+                        @if (message.FromWho == Guid.Parse(ViewData["userId"].ToString()))
+                        {
+                            offset = "col-md-6 offset-md-6";
+                        }
+                        else
+                        {
+                            offset = "col-md-6 offset-md-0";
+                        }
+
+                        <li class="row">
+                            <div class="@offset">
+                                <div class="container darker bg-primary">
+                                    <p class="text-left text-white m-1">@message.Text</p>
+                                    <span class="time-left text-light">@message.When.ToString("M/dd/yyyy hh:MM tt")</span>
+                                </div>
                             </div>
-                        </div>
-                    </li>
+                        </li>
+                    }
                 }
-            }
-        </ul>
+            </ul>
+        </div>
         <div class="col-md-12">
             <div class="form-group">
                 <input class="form-control" id="messageText" />
@@ -55,4 +59,9 @@
 	var userId = "@ViewData["userId"]";
             var friendId = "@ViewData["friendId"]";
     </script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/oidc-client/1.9.1/oidc-client.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="~/js/loadingMesseges.js"></script>
 }

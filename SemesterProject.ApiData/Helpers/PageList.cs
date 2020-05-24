@@ -14,6 +14,7 @@ namespace SemesterProject.ApiData.Helpers
 		public int TotalCount { get; set; }
 		public bool HasPrevious => (CurrentPage > 1);
 		public bool HasNext => (CurrentPage < TotalPages);
+		
 		public PagedList()
 		{
 
@@ -29,12 +30,12 @@ namespace SemesterProject.ApiData.Helpers
 				AddRange(items);
 			}
 		}
-		public static PagedList<T> Create(List<T> source, int pageNumber, int pageSize)
+		public static PagedList<T> Create(List<T> source, int pageNumber, int pageSize, int skip)
 		{
 			if (source != null)
 			{
 				var count = source.Count;
-				var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+				var items = source.Skip(skip).Take(pageSize).ToList();
 				return new PagedList<T>(items, count, pageNumber, pageSize);
 			}
 			else

@@ -14,6 +14,7 @@ connection.start().then(function () {
     return console.error(err.toString());
 });
 
+
 connection.on("ReceiveNotification", function () {
     var notificationParagraph = document.getElementById("notifications");
     var value = parseInt(notificationParagraph.textContent, 10);
@@ -26,20 +27,22 @@ connection.on("ReceiveNotification", function () {
 });
 
 connection.on("ReceiveMessage", function (user, message) {
-    var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     addMessage(message, "col-md-6 offset-md-0");
+    takenMessages++;
 });
 
 document.getElementById("submitButton").addEventListener("click", function (event) {
     var message = document.getElementById("messageText").value;
-    connection.invoke("SendPrivateMessage", friendId, message, userId).catch(function (err) {
-        return console.error(err.toString());
-    });
+    if (message != '') {
+        connection.invoke("SendPrivateMessage", friendId, message, userId).catch(function (err) {
+            return console.error(err.toString());
+        });
 
-    addMessage(message, "col-md-6 offset-md-6");
-
-    document.getElementById("messageText").value = "";
-    event.preventDefault();
+        addMessage(message, "col-md-6 offset-md-6");
+        takenMessages++;
+        document.getElementById("messageText").value = "";
+        event.preventDefault();
+    }
 });
 
 function sendLike(postId, postNumber, isLiked) {

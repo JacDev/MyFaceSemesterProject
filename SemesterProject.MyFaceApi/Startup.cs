@@ -54,6 +54,16 @@ namespace SemesterProject.MyFaceApi
 			services.AddScoped<INotificationRepository, NotificationRepository>();
 
 			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+			services.AddCors(options =>
+			{
+				// this defines a CORS policy called "default"
+				options.AddPolicy("default", policy =>
+				{
+					policy.WithOrigins("https://localhost:44393")
+						.AllowAnyHeader()
+						.AllowAnyMethod().AllowAnyOrigin();
+				});
+			});
 		}
 		
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -64,7 +74,7 @@ namespace SemesterProject.MyFaceApi
 			}
 
 			app.UseHttpsRedirection();
-
+			app.UseCors("default");
 			app.UseRouting();
 
 			app.UseAuthentication();

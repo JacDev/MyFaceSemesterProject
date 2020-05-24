@@ -123,11 +123,12 @@ namespace SemesterProject.ApiData.Repository
 			if (collection == null)
 			{
 
-				return PagedList<Message>.Create(null, 0, 0);
+				return PagedList<Message>.Create(null, 0, 0, 0);
 			}
 			return PagedList<Message>.Create(collection,
 			   paginationParams.PageNumber,
-			   paginationParams.PageSize);
+			   paginationParams.PageSize,
+			   paginationParams.Skip);
 		}
 	}
 }

@@ -53,7 +53,30 @@ namespace SemesterProject.IdentityServer
 					AlwaysIncludeUserClaimsInIdToken = true,
 
 					RequireConsent = false
-				}
+				},
+				new Client {
+					ClientId = "MyFaceJsClient",
+
+					AllowedGrantTypes = GrantTypes.Code,
+					RequirePkce = true,
+					RequireClientSecret = false,
+
+					RedirectUris = { "https://localhost:44393/message/jslogin" },
+					PostLogoutRedirectUris = { "https://localhost:44393/Test/Index" },
+					AllowedCorsOrigins = { "https://localhost:44393" },
+
+					AllowedScopes = {
+						IdentityServerConstants.StandardScopes.OpenId,
+						IdentityServerConstants.StandardScopes.Profile,
+						"MyFaceApi",
+						"userinfo"
+					},
+
+					AccessTokenLifetime = 1,
+
+					AllowAccessTokensViaBrowser = true,
+					RequireConsent = false,
+				},
 			};
 	}
 }

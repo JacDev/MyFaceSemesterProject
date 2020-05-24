@@ -72,6 +72,16 @@ namespace SemesterProject.MyFaceMVC
 
 			services.AddScoped<IOnlineUsersRepository, OnlineUsersRepository>();
 			services.AddSignalR();
+			//services.AddCors(options =>
+			//{
+			//	// this defines a CORS policy called "default"
+			//	options.AddPolicy("default", policy =>
+			//	{
+			//		policy.WithOrigins("https://localhost:44393")
+			//			.AllowAnyHeader()
+			//			.AllowAnyMethod().AllowAnyOrigin();
+			//	});
+			//});
 		}
 
 
@@ -80,7 +90,7 @@ namespace SemesterProject.MyFaceMVC
 
 			app.UseExceptionHandler("/Home/Error");
 			app.UseHsts();
-
+			//app.UseCors("default");
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
 
