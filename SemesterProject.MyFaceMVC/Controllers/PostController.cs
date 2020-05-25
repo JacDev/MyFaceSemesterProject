@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SemesterProject.ApiData.Entities;
 using SemesterProject.ApiData.Models;
+using SemesterProject.MyFaceMVC.FilesManager;
 using SemesterProject.MyFaceMVC.Services;
 using SemesterProject.MyFaceMVC.ViewModels;
 
@@ -17,10 +18,12 @@ namespace SemesterProject.MyFaceMVC.Controllers
     public class PostController : Controller
     {
         private readonly IMyFaceApiService _myFaceApiService;
+        private readonly IImagesManager _imagesManager;
         private readonly string _userId;
-        public PostController(IMyFaceApiService myFaceApiService, IHttpContextAccessor httpContextAccessor)
+        public PostController(IMyFaceApiService myFaceApiService, IHttpContextAccessor httpContextAccessor, IImagesManager imagesManager)
         {
             _myFaceApiService = myFaceApiService;
+            _imagesManager = imagesManager;
             _myFaceApiService.AddUserIfNotExist(httpContextAccessor.HttpContext.User).GetAwaiter();
             _userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
         }
@@ -33,8 +36,19 @@ namespace SemesterProject.MyFaceMVC.Controllers
 
             if (post.NewPost != null)
             {
-                post.NewPost.WhenAdded = DateTime.Now;
-                await _myFaceApiService.AddPost(userId, post.NewPost);
+                string imagePath = null, fullImagePath = null;
+                if (post.NewPost.Picture != null)
+                {
+                    (imagePath, fullImagePath) = await _imagesManager.SaveImage(post.NewPost.Picture);
+                }
+
+                await _myFaceApiService.AddPost(userId, new PostToAdd
+                {
+                  ImageFullPath = fullImagePath,
+                  Text = post.NewPost.Text,
+                  WhenAdded = DateTime.Now,
+                  ImagePath = imagePath
+                });
             }
 
             return RedirectToAction(nameof(Index), "Profile");
@@ -132,6 +146,12 @@ namespace SemesterProject.MyFaceMVC.Controllers
                 Text = post.Text
             });
             return RedirectToAction(nameof(Index), "Profile");
+        }
+        [HttpGet("/Image/{image}")]
+        public IActionResult Image(string image)
+        {
+            var mime = image.Substring(image.LastIndexOf('.') + 1);
+            return new FileStreamResult(_imagesManager.ImageStream(image), $"image/{mime}");
         }
     }
 }

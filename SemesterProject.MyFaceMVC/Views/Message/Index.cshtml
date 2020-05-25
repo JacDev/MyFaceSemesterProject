@@ -3,14 +3,14 @@
     ViewData["Title"] = ViewData["friendFirstName"].ToString() + ViewData["friendLastName"].ToString();
 }
 
-<div class="jumbotron bg-light">
-    <h2 class="text-center text-primary">
+<div class="jumbotron bg-light pt-2">
+    <h2 class="text-center text-dark">
         @ViewData["friendFirstName"].ToString() @ViewData["friendLastName"].ToString()
     </h2>
 
-    <div class="row">
+    <div class="row d-flex justify-content-center">
         <div>
-            <button onclick="callApi()">See More</button>
+            <button class="btn btn-danger" onclick="callApi()">Show more</button>
         </div>
 
         <div class="col-md-12" id="messageField">
@@ -23,11 +23,11 @@
 
                         @if (message.FromWho == Guid.Parse(ViewData["userId"].ToString()))
                         {
-                            offset = "col-md-6 offset-md-6";
+                            offset = "col-sm-6 offset-sm-6";
                         }
                         else
                         {
-                            offset = "col-md-6 offset-md-0";
+                            offset = "col-sm-6 offset-sm-0";
                         }
 
                         <li class="row">

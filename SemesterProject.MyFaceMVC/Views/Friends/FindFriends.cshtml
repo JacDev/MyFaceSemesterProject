@@ -1,45 +1,23 @@
 ﻿@model List<BasicUserData>
 @{
-    ViewData["Title"] = "FindFriends";
+    ViewData["Title"] = "Find Friends";
 }
 
-<h1>Find Friends</h1>
+<h3 class="text-center text-white">Find Friends</h3>
 
-<form asp-controller="Friends" asp-action="FindFriends">
-    <div class="form-group">
-        <div class="input-group">
-            <input type="search" class="form-control" name="searchName">
-            <span class="input-group-append">
-                <button class="btn btn-success">
-                    <i class="fas fa-search"></i>
-                </button>
-            </span>
+<div class="bg-light col-12 p-2 mt-3">
+    <form>
+        <div class="form-group col-12 m-3">
+            <div class="input-group col-12">
+                <div class="input-group">
+                    <input oninput="updateResult(this.value)" type="search" placeholder="Search..." class="col-12 bg-light" />
+                    <div class="container">
+                        <ul class="list-group result mt-2"></ul>
+                    </div>
+
+                </div>
+            </div>
         </div>
-    </div>
-</form>
-
-
-<div class="col-12 border p-3 mt-3">
-    <form method="post">
-        <table class="table col-12">
-            <thead>
-                <tr>
-                    <th class="col-9">Name</th>
-                    <th class="col-1"></th>
-                </tr>
-            </thead>
-            @foreach (var user in Model)
-            {
-
-                <tbody>
-                    <tr>
-                        <td><a asp-action="ViewProfile" asp-route-friendId="@user.Id">@user.FirstName @user.LastName</a></td>
-                        <td>
-                            <button asp-action="AddFriend" asp-route-userId="@user.Id" onclick="sendNotification('@ViewData["userId"].ToString()', '@user.Id.ToString()', null, 'friendRequest')" class="btn btn-light btn-sm"><i class="fas fa-user-plus"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
-            }
-        </table>
     </form>
 </div>
+<script src="~/js/friendsSearch.js"></script>

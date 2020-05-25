@@ -34,7 +34,7 @@ namespace SemesterProject.MyFaceApi.Controllers
 
 		[AllowAnonymous]
 		[HttpGet]
-		public ActionResult<IQueryable<UserToReturnWithCounters>> GetUsers(string searchName = null)
+		public ActionResult<List<UserToReturnWithCounters>> GetUsers(string searchName = null)
 		{
 			List<User> usersFromRepo;
 			if (searchName == null)
@@ -45,7 +45,7 @@ namespace SemesterProject.MyFaceApi.Controllers
 			{
 				usersFromRepo = _userRepository.GetUsers(searchName).ToList();
 			}
-			return Ok(_mapper.Map<IEnumerable<UserToReturnWithCounters>>(usersFromRepo));
+			return Ok(_mapper.Map<List<UserToReturnWithCounters>>(usersFromRepo));
 		}
 
 		[HttpGet("{userId}", Name = "GetUser")]

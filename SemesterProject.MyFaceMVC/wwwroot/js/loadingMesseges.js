@@ -54,10 +54,10 @@ var callApi = function () {
 function wypisz(list, item) {
     console.log(item['text']);
     if (userId == item['fromWho']) {
-        addOldMessage(item['text'], "col-md-6 offset-md-6", list, item['when']);
+        addOldMessage(item['text'], "col-sm-6 offset-sm-6", list, item['when']);
     }
     else {
-        addOldMessage(item['text'], "col-md-6 offset-md-0", list, item['when']);
+        addOldMessage(item['text'], "col-sm-6 offset-sm-0", list, item['when']);
     }
     takenMessages += 1;
 }

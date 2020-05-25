@@ -1,10 +1,12 @@
 ﻿@model IEnumerable<MessagesWithUserData>
-<div class="col-12 border p-3 mt-3">
+
+    <div class="col-12 border p-3 mt-3 bg-white">
+
         @foreach (var message in Model)
         {
             var toWho = ViewData["userId"].ToString() == message.Message.ToWho.ToString() ? message.Message.FromWho : message.Message.ToWho;
             <a asp-controller="Message" asp-action="Index" asp-route-friendId="@toWho">
-                <div class="d-flex border mb-1">
+                <div class="d-flex border mb-2 bg-light">
                     <div class="p-2">
                         @message.User.FirstName @message.User.LastName
                     </div>

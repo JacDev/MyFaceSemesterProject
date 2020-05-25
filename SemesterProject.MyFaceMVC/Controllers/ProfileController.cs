@@ -33,15 +33,18 @@ namespace SemesterProject.MyFaceMVC.Controllers
             posts.Reverse();
 
             ViewData["userId"] = _userId.ToString();
-            UserPostsWithPostToAdd userToView = new UserPostsWithPostToAdd { Posts = posts, NewPost = new PostToAdd() };
+            UserPostsWithPostToAdd userToView = new UserPostsWithPostToAdd { Posts = posts, NewPost = new PostWithImageToAdd() };
             return View(userToView);
         }
 
         [HttpGet]
         public async Task<IActionResult> Notifications()
         {
-            IEnumerable<NotificationWithBasicFromWhoData> notifications = (await _myFaceApiService.GetNotifications(_userId)).Where(n=>n.Notification.WasSeen==false);
-
+            IEnumerable<NotificationWithBasicFromWhoData> notifications = (await _myFaceApiService.GetNotifications(_userId));
+            foreach(var notification in notifications)
+            {
+                await _myFaceApiService.MarkNotificationAsSeen(_userId, notification.Notification.Id);
+            }
             return View(notifications);
         }
         public IActionResult Logout()

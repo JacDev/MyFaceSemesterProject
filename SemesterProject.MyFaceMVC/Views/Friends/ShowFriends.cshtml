@@ -3,34 +3,28 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Friends</h1>
+<h3 class="text-center text-white">Friends</h3>
 
-<div class="col-12 border p-3 mt-3">
+<div class="col-12 border p-3 mt-3 bg-white ">
     <form method="post">
-        <table class="table col-12">
-            <thead>
-                <tr>
-                    <th class="col-9">Name</th>
-                    <th class="col-1"></th>
-                </tr>
-            </thead>
-            @foreach (var user in Model)
-            {
-                <tbody>
-                    <tr> 
-                        <td>
-                        <a asp-action="ViewProfile" asp-route-friendId="@user.Id">@user.FirstName @user.LastName</a>
-                        </td>
-                        <td>
-                            <button asp-controller="Message" asp-action="Index" asp-route-friendId="@user.Id" class="btn btn-light btn-sm">Send Message</button>
-                        </td>
-                        <td>
-                            <button asp-controller="Friends" asp-action="DeleteFriend" asp-route-friendId="@user.Id" class="btn btn-danger btn-sm">Delete</button>
-                        </td>
 
-                    </tr>
-                </tbody>
-            }
-        </table>
-    </form>
+        @foreach (var user in Model)
+        {
+        <div class="d-flex row col-12 bg-light border border-dark p-2 mx-1">
+            <div class="p-2 mr-auto">
+                <a asp-action="ViewProfile" asp-route-friendId="@user.Id">@user.FirstName @user.LastName</a>
+            </div>
+           
+
+            <button asp-controller="Message" asp-action="Index" asp-route-friendId="@user.Id" class="btn btn-primary btn-sm mr-1">
+                <i class="fab fa-facebook-messenger"></i>
+            </button>
+
+            <button asp-controller="Friends" asp-action="DeleteFriend" asp-route-friendId="@user.Id" class="btn btn-danger btn-sm">
+                <i class="fas fa-user-times"></i>
+            </button>
+        </div>
+                }
+
+        </form>
 </div>

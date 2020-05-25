@@ -27,7 +27,7 @@ connection.on("ReceiveNotification", function () {
 });
 
 connection.on("ReceiveMessage", function (user, message) {
-    addMessage(message, "col-md-6 offset-md-0");
+    addMessage(message, "col-sm-6 offset-sm-0");
     takenMessages++;
 });
 
@@ -38,7 +38,7 @@ document.getElementById("submitButton").addEventListener("click", function (even
             return console.error(err.toString());
         });
 
-        addMessage(message, "col-md-6 offset-md-6");
+        addMessage(message, "col-sm-6 offset-sm-6");
         takenMessages++;
         document.getElementById("messageText").value = "";
         event.preventDefault();
@@ -67,12 +67,12 @@ function sendLike(postId, postNumber, isLiked) {
         likedPost[postNumberAsString] = !isLiked;
     }
     if (!likedPost[postNumberAsString]) {
-        icon.className = "far fa-thumbs-up fa-2x";
+        icon.className = "far fa-thumbs-up fa-lg";
         value--;
     }
     else {
         value++;
-        icon.className = "fas fa-thumbs-up fa-2x";
+        icon.className = "fas fa-thumbs-up fa-lg";
     }
     icon.textContent = value
 
