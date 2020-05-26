@@ -86,9 +86,8 @@ namespace SemesterProject.ApiData.Repository
 			List<Message> messagesToReturn = new List<Message>();
 			foreach(var conv in userConversations)
 			{
-				messagesToReturn.AddRange(conv.OrderBy(x => x.When).Take(1));
+				messagesToReturn.AddRange(conv.OrderByDescending(x => x.When).Take(1));
 			}
-
 
 			return messagesToReturn;
 		}

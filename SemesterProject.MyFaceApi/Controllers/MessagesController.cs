@@ -120,11 +120,9 @@ namespace SemesterProject.MyFaceApi.Controllers
 			}
 			return Url.Link("GetMessages", new
 			{
-				pageNumber = pageNumber,
+				pageNumber,
 				pageSize = paginationParams.PageSize
 			});
 		}
-		
-
 	}
 }

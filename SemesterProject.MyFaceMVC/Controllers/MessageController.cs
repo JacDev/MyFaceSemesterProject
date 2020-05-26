@@ -3,32 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SemesterProject.ApiData.Entities;
 using SemesterProject.ApiData.Helpers;
 using SemesterProject.MyFaceMVC.ApiAccess;
-using SemesterProject.MyFaceMVC.Services;
 using SemesterProject.MyFaceMVC.ViewModels;
 
 namespace SemesterProject.MyFaceMVC.Controllers
 {
-    [Authorize]
     public class MessageController : Controller
     {
         private readonly IUserApiAccess _userApiAccess;
         private readonly IMessageApiAccess _messageApiService;
+        private readonly ILogger<MessageController> _logger;
         private readonly string _userId;
-        public MessageController(IUserApiAccess userApiAccess, IHttpContextAccessor httpContextAccessor, IMessageApiAccess messageApiService)
+        public MessageController(IUserApiAccess userApiAccess,
+            IHttpContextAccessor httpContextAccessor,
+            IMessageApiAccess messageApiService,
+            ILogger<MessageController> logger)
         {
             _userApiAccess = userApiAccess;
             _messageApiService = messageApiService;
+            _logger = logger;
             _userApiAccess.AddUserIfNotExist(httpContextAccessor.HttpContext.User).GetAwaiter();
             _userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
         }
-
-        public async Task<IActionResult> Index(string friendId)
+        [HttpGet]
+        public async Task<ActionResult<PagedList<Message>>> Index(string friendId)
         {
             try
             {
@@ -52,28 +55,36 @@ namespace SemesterProject.MyFaceMVC.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return NotFound();
+                _logger.LogError($"Something went wrong during loading messages with: {friendId} by user {_userId}");
+                _logger.LogError($"Exception info: {ex.Message} {ex.Source}");
+                return RedirectToAction("Error", "Error");
             }
         }
-        public async Task<IActionResult> Messages()
+        [HttpGet]
+        public async Task<ActionResult<List<MessagesWithUserData>>> Messages()
         {
-            var messages = await _messageApiService.GetMessages(_userId);
-
-            List<MessagesWithUserData> messagesToReturn = new List<MessagesWithUserData>();
-
-            foreach(var message in messages)
+            try
             {
-                messagesToReturn.Add(new MessagesWithUserData
-                {
-                    Message = message,
-                    User = await _userApiAccess.GetUser(message.FromWho.ToString())
-       
-                });
-            }
+                IEnumerable<Message> messages = await _messageApiService.GetMessages(_userId);
+                List<MessagesWithUserData> messagesToReturn = new List<MessagesWithUserData>();
 
-            ViewData["userId"] = _userId.ToString();
-            return View(messagesToReturn);
+                foreach (Message message in messages)
+                {
+                    messagesToReturn.Add(new MessagesWithUserData
+                    {
+                        Message = message,
+                        User = await _userApiAccess.GetUser(message.FromWho.ToString())
+                    });
+                }
+                ViewData["userId"] = _userId.ToString();
+                return View(messagesToReturn);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong during loading user: {_userId} messages");
+                _logger.LogError($"Exception info: {ex.Message} {ex.Source}");
+                return RedirectToAction("Error", "Error");
+            }
         }
         public IActionResult JsLogin()
         {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using SemesterProject.ApiData.Entities;
 using SemesterProject.ApiData.Models;
 using SemesterProject.MyFaceMVC.ApiAccess;
@@ -18,106 +19,125 @@ namespace SemesterProject.MyFaceMVC.Hubs
 		private readonly IMessageApiAccess _messageApiService;
 		private readonly IPostApiAccess _postApiAccess;
 		private readonly INotificationApiAccess _notificationApiAccess;
+		private readonly ILogger<NotificationHub> _logger;
 
 		public NotificationHub(IOnlineUsersRepository onlineUsers,
 			IFriendApiAccess friendApiAccess, 
 			IMessageApiAccess messageApiService, 
 			IPostApiAccess postApiAccess, 
-			INotificationApiAccess notificationApiAccess)
+			INotificationApiAccess notificationApiAccess,
+			ILogger<NotificationHub> logger) 
 		{
 			_onlineUsers = onlineUsers;
 			_friendApiAccess = friendApiAccess;
 			_messageApiService = messageApiService;
 			_postApiAccess = postApiAccess;
 			_notificationApiAccess = notificationApiAccess;
+			_logger = logger;
 		}
 		public async Task SendPrivateNotificaion(string toUserId, string notificationType, string fromWho, string eventId, bool wasLiked = false)
 		{
-			if (!string.IsNullOrWhiteSpace(toUserId) && !string.IsNullOrWhiteSpace(fromWho))
+			try
 			{
-				if (notificationType == "like")
+				if (!string.IsNullOrWhiteSpace(toUserId) && !string.IsNullOrWhiteSpace(fromWho))
 				{
-					if (!wasLiked)
+					if (notificationType == "like")
 					{
-						await _postApiAccess.AddPostLike(fromWho, new PostLike
+						if (!wasLiked)
 						{
-							WhenAdded = DateTime.Now,
-							FromWho = Guid.Parse(fromWho),
-							PostId = Guid.Parse(eventId)
-						});
+							await _postApiAccess.AddPostLike(fromWho, new PostLike
+							{
+								WhenAdded = DateTime.Now,
+								FromWho = Guid.Parse(fromWho),
+								PostId = Guid.Parse(eventId)
+							});
+							await _notificationApiAccess.AddNotification(new NotificationToAdd
+							{
+								FromWho = Guid.Parse(fromWho),
+								UserId = Guid.Parse(toUserId),
+								WasSeen = false,
+								NotificationType = NotificationType.Like,
+								EventId = Guid.Parse(eventId)
+							});
+						}
+						else
+						{
+							await _postApiAccess.DeletePostLike(eventId, fromWho, toUserId);
+							Notification notificationToDelete = await _notificationApiAccess.GetNotification(Guid.Parse(toUserId), Guid.Parse(eventId), Guid.Parse(fromWho));
+							await _notificationApiAccess.DeleteNotification(toUserId, notificationToDelete.Id.ToString());
+							return;
+						}
+					}
+
+					else if (notificationType == "friendRequest")
+					{
+						if (await _friendApiAccess.CheckIfAreFriends(Guid.Parse(toUserId), Guid.Parse(fromWho)))
+						{
+							return;
+						}
 						await _notificationApiAccess.AddNotification(new NotificationToAdd
 						{
 							FromWho = Guid.Parse(fromWho),
 							UserId = Guid.Parse(toUserId),
 							WasSeen = false,
-							NotificationType = NotificationType.Like,
-							EventId = Guid.Parse(eventId)
+							NotificationType = NotificationType.FriendRequiest
 						});
 					}
-					else
+
+					// send message if user is online
+					if (_onlineUsers.IsUserOnline(toUserId))
 					{
-						await _postApiAccess.DeletePostLike(eventId, fromWho, toUserId);
-						var notificationToDelete = await _notificationApiAccess.GetNotification(Guid.Parse(toUserId), Guid.Parse(eventId), Guid.Parse(fromWho));
-						await _notificationApiAccess.DeleteNotification(toUserId, notificationToDelete.Id.ToString());
-						return;
+						string toWhomConnectionId = _onlineUsers.GetOnlineUser(toUserId).NotificationConnectionId;
+						await Clients.Client(toWhomConnectionId).SendAsync("ReceiveNotification");
 					}
 				}
-
-				else if (notificationType == "friendRequest")
-				{
-					if (await _friendApiAccess.CheckIfAreFriends(Guid.Parse(toUserId), Guid.Parse(fromWho)))
-					{
-						return;
-					}
-					await _notificationApiAccess.AddNotification(new NotificationToAdd
-					{
-						FromWho = Guid.Parse(fromWho),
-						UserId = Guid.Parse(toUserId),
-						WasSeen = false,
-						NotificationType = NotificationType.FriendRequiest
-					});
-				}
-
-				// send message if user is online
-				if (_onlineUsers.IsUserOnline(toUserId))
-				{
-					string toWhomConnectionId = _onlineUsers.GetOnlineUser(toUserId).NotificationConnectionId;
-					await Clients.Client(toWhomConnectionId).SendAsync("ReceiveNotification");
-				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError($"Something went wrong in NotificationHub during sending private notifications. toUserId: {toUserId}, notificationType: {notificationType}, fromWho: {fromWho}, eventId {eventId}");
+				_logger.LogError($"Exception info: {ex.Message} {ex.Source}");
 			}
 			
 		}
 		public async Task SendPrivateMessage(string toUserId, string message, string fromWho)
 		{
-			if (!string.IsNullOrWhiteSpace(toUserId) && !string.IsNullOrWhiteSpace(fromWho))
+			try
 			{
-				// send message if user is online
-				if (_onlineUsers.IsUserOnline(toUserId))
+				if (!string.IsNullOrWhiteSpace(toUserId) && !string.IsNullOrWhiteSpace(fromWho))
 				{
-					string toWhomConnectionId = _onlineUsers.GetOnlineUser(toUserId).NotificationConnectionId;
-					await Clients.Client(toWhomConnectionId).SendAsync("ReceiveMessage", fromWho, message);
-				}
-				//if user is offline, add notification
-				else
-				{
-					await _notificationApiAccess.AddNotification(new NotificationToAdd
+					// send message if user is online
+					if (_onlineUsers.IsUserOnline(toUserId))
 					{
-						FromWho = Guid.Parse(fromWho),
-						UserId = Guid.Parse(toUserId),
-						WasSeen = false
+						string toWhomConnectionId = _onlineUsers.GetOnlineUser(toUserId).NotificationConnectionId;
+						await Clients.Client(toWhomConnectionId).SendAsync("ReceiveMessage", fromWho, message);
+					}
+					//if user is offline, add notification
+					else
+					{
+						await _notificationApiAccess.AddNotification(new NotificationToAdd
+						{
+							FromWho = Guid.Parse(fromWho),
+							UserId = Guid.Parse(toUserId),
+							WasSeen = false
+						});
+					}
+					await _messageApiService.AddMessage(fromWho, new MessageToAdd
+					{
+						Text = message,
+						ToWho = Guid.Parse(toUserId),
+						When = DateTime.Now
 					});
 				}
-				await _messageApiService.AddMessage(fromWho, new MessageToAdd
-				{
-					Text = message,
-					ToWho = Guid.Parse(toUserId),
-					When = DateTime.Now
-				});
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError($"Something went wrong in NotificationHub during sending private message. toUserId: {toUserId}, fromWho: {fromWho}");
+				_logger.LogError($"Exception info: {ex.Message} {ex.Source}");
 			}
 		}
 		public override async Task OnConnectedAsync()
 		{
-			var _loggedUser = GetLoggedUser();
+			OnlineUserModel _loggedUser = GetLoggedUser();
 			if (!string.IsNullOrWhiteSpace(_loggedUser.Id))
 			{
 				if (_onlineUsers.IsUserOnline(_loggedUser.Id))
@@ -134,7 +154,7 @@ namespace SemesterProject.MyFaceMVC.Hubs
 		}
 		public override async Task OnDisconnectedAsync(Exception ex)
 		{
-			var _loggedUser = GetLoggedUser();
+			OnlineUserModel _loggedUser = GetLoggedUser();
 			if (_loggedUser != null)
 			{
 				await _onlineUsers.RemoveUser(_loggedUser);
@@ -143,7 +163,7 @@ namespace SemesterProject.MyFaceMVC.Hubs
 		}
 		private OnlineUserModel GetLoggedUser()
 		{
-			var user = new OnlineUserModel
+			OnlineUserModel user = new OnlineUserModel
 			{
 				Id = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value,
 				FirstName = Context.User.Claims.FirstOrDefault(c => c.Type == "FirstName").Value,

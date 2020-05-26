@@ -1,9 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication;
 using SemesterProject.MyFaceMVC.Services;
 using Microsoft.AspNetCore.Http;
@@ -14,8 +12,7 @@ using SemesterProject.MyFaceMVC.Repository;
 using SemesterProject.MyFaceMVC.Hubs;
 using SemesterProject.MyFaceMVC.FilesManager;
 using SemesterProject.MyFaceMVC.ApiAccess;
-using SemesterProject.ApiData.Entities;
-using System.Runtime.Serialization.Formatters;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace SemesterProject.MyFaceMVC
 {
@@ -55,7 +52,7 @@ namespace SemesterProject.MyFaceMVC
 						options.Scope.Add("userinfo");
 					});
 
-			services.AddControllersWithViews();
+			services.AddControllersWithViews(options=> options.Filters.Add(new AuthorizeFilter()));
 			services.AddHttpContextAccessor();
 
 			services.AddHttpClient<IMyFaceApiService, MyFaceApiService>(
@@ -66,8 +63,6 @@ namespace SemesterProject.MyFaceMVC
 					client.SetBearerToken(accessToken);
 					client.BaseAddress = new Uri($"{UrlAddressescs.MyFaceApiUri}");
 				});
-
-
 
 			services.AddScoped<IUserApiAccess, UserApiAccess>();
 			services.AddScoped<IFriendApiAccess, FriendApiAccess>();
@@ -81,15 +76,14 @@ namespace SemesterProject.MyFaceMVC
 				);
 
 			services.AddScoped<IOnlineUsersRepository, OnlineUsersRepository>();
+
 			services.AddSignalR();
 			services.AddScoped<IImagesManager, ImageManager>();
 		}
 
-
 		public void Configure(IApplicationBuilder app)
 		{
-
-			app.UseExceptionHandler("/Home/Error");
+			app.UseExceptionHandler("/Error/Error");
 			app.UseHsts();
 
 			app.UseHttpsRedirection();
