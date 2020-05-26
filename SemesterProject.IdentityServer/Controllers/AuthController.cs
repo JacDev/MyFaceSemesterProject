@@ -67,7 +67,7 @@ namespace SemesterProject.IdentityServer.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Register(string returnUrl)
+        public IActionResult Register(string returnUrl)
         {
             return View(new RegisterViewModel { ReturnUrl = returnUrl });
         }
@@ -105,7 +105,7 @@ namespace SemesterProject.IdentityServer.Controllers
             var callbackUrl = Url.Action(
                         "ConfirmEmail",
                         "Auth",
-                        values: new { userId = user.Id, code = code, redirectUrl = registerViewModel.ReturnUrl },
+                        values: new { userId = user.Id, code, redirectUrl = registerViewModel.ReturnUrl },
                         protocol: Request.Scheme);
 
             await _emailSender.SendEmailAsync(registerViewModel.Email, "MyFace confirm email",
@@ -158,7 +158,7 @@ namespace SemesterProject.IdentityServer.Controllers
                 var callbackUrl = Url.Action(
                             "ResetPassword",
                             "Auth",
-                            values: new { userId = user.Id, code = code, redirectUrl = forgotPasswordModel.ReturnUrl },
+                            values: new { userId = user.Id, code, redirectUrl = forgotPasswordModel.ReturnUrl },
                             protocol: Request.Scheme);
 
                 await _emailSender.SendEmailAsync(forgotPasswordModel.Email, "MyFace reset password email",

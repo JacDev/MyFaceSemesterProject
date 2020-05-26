@@ -9,6 +9,7 @@ using SemesterProject.ApiData.Entities;
 using SemesterProject.ApiData.Repository;
 using SemesterProject.ApiData.Models;
 using Microsoft.AspNetCore.Authorization;
+using SemesterProject.MyFaceApi.Helpers;
 
 namespace SemesterProject.MyFaceApi.Controllers
 {
@@ -33,7 +34,8 @@ namespace SemesterProject.MyFaceApi.Controllers
 		}
 
 		[AllowAnonymous]
-		[HttpGet]
+		[HttpGet("with/{searchName}")]
+		[HttpGet("with")]
 		public ActionResult<List<UserToReturnWithCounters>> GetUsers(string searchName = null)
 		{
 			List<User> usersFromRepo;
@@ -46,6 +48,21 @@ namespace SemesterProject.MyFaceApi.Controllers
 				usersFromRepo = _userRepository.GetUsers(searchName).ToList();
 			}
 			return Ok(_mapper.Map<List<UserToReturnWithCounters>>(usersFromRepo));
+		}
+		[HttpGet]
+		public IActionResult GetUsersById([ModelBinder(typeof(ArrayModelBinder))] string[] ids)
+		{
+			if (ids == null)
+			{
+				return BadRequest();
+			}
+			var users = _userRepository.GetUsers(ids);
+			if (ids.Count() != users.Count())
+			{
+				return NotFound();
+			}
+
+			return Ok(_mapper.Map<IEnumerable<UserToReturnWithCounters>>(users));
 		}
 
 		[HttpGet("{userId}", Name = "GetUser")]

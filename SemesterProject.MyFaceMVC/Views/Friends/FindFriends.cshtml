@@ -10,9 +10,18 @@
         <div class="form-group col-12 m-3">
             <div class="input-group col-12">
                 <div class="input-group">
-                    <input oninput="updateResult(this.value)" type="search" placeholder="Search..." class="col-12 bg-light" />
+                    <input oninput="updateResult(this.value, '@ViewData["userId"].ToString()')" type="search" placeholder="Search..." class="col-12 bg-light" />
                     <div class="container">
-                        <ul class="list-group result mt-2"></ul>
+                        <ul class="list-group result mt-2">
+                            @foreach (var user in Model)
+                            {
+                            <li class="list-group-item d-flex justify-content-between">
+                                <a href="/Friends/ViewProfile?friendId=@user.Id.ToString()"> @user.FirstName @user.LastName</a>
+                                <button onclick="sendNotification('@ViewData["userId"].ToString()', '@user.Id.ToString()', null, 'friendRequest')" class="btn btn-light btn-sm offset-sm-6"><i class="fas fa-user-plus"></i></button>
+                            </li>
+
+                            }
+                        </ul>
                     </div>
 
                 </div>

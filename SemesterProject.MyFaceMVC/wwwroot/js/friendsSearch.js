@@ -1,9 +1,9 @@
-﻿function updateResult(query) {
+﻿function updateResult(query, userId) {
     let resultList = document.querySelector(".result");
     resultList.innerHTML = "";
 
 
-    var baseLink = 'https://localhost:44349/api/users?searchName=';
+    var baseLink = 'https://localhost:44349/api/users/with/';
     var fullLink = baseLink + query;
 
     var request = new XMLHttpRequest()
@@ -17,9 +17,11 @@
                 console.log(user);
                 var userData = user['firstName'] + ' ' + user['lastName'];
 
-                resultList.innerHTML += `<a href="/Friends/ViewProfile?friendId=${user['id']}" <li class="list-group-item d-flex justify-content-between"> ${userData} 
-                   <button onclick="sendNotification('@ViewData["userId"].ToString()', '@user.Id.ToString()', null, 'friendRequest')" class="btn btn-light btn-sm offset-sm-6"><i class="fas fa-user-plus"></i></button>
-                    </li></a>`;
+
+
+                resultList.innerHTML += `<li class="list-group-item d-flex justify-content-between"> <a href="/Friends/ViewProfile?friendId=${user['id']}"> ${userData} </a>
+                   <button onclick="sendNotification('${userId}', '${user['id']}', null, 'friendRequest')" class="btn btn-light btn-sm offset-sm-6"><i class="fas fa-user-plus"></i></button>
+                    </li>`;
             })
         } else {
             console.log('error');

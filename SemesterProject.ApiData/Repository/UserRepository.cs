@@ -63,10 +63,45 @@ namespace SemesterProject.ApiData.Repository
 			{
 				throw new ArgumentNullException(nameof(usersId));
 			}
+
 			_logger.LogDebug("Trying to get users...");
 			try
 			{
 				List<User> users = _appDbContext.Users.Where(a => usersId.Contains(a.Id))
+					.OrderBy(a => a.FirstName)
+					.OrderBy(a => a.LastName)
+					.ToList();
+				if (users == null)
+				{
+					_logger.LogDebug("No user was found.");
+				}
+				else
+				{
+					_logger.LogDebug("Some users found.");
+				}
+				return users;
+			}
+			catch
+			{
+				_logger.LogWarning("Something went wrong while searching users");
+				throw;
+			}
+		}
+		public List<User> GetUsers(IEnumerable<string> usersId)
+		{
+			if (usersId == null)
+			{
+				throw new ArgumentNullException(nameof(usersId));
+			}
+			var usersGuid = new List<Guid>();
+			foreach (var id in usersId)
+			{
+				usersGuid.Add(Guid.Parse(id));
+			}
+			_logger.LogDebug("Trying to get users...");
+			try
+			{
+				List<User> users = _appDbContext.Users.Where(a => usersGuid.Contains(a.Id))
 					.OrderBy(a => a.FirstName)
 					.OrderBy(a => a.LastName)
 					.ToList();

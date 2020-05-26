@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SemesterProject.ApiData.Models;
+using SemesterProject.MyFaceMVC.ApiAccess;
 using SemesterProject.MyFaceMVC.Services;
 using System;
 using System.Linq;
@@ -12,12 +13,12 @@ namespace SemesterProject.MyFaceMVC.ViewComponents
 	[ViewComponent(Name = "NavigationBar")]
 	public class NavigationBarViewComponents : ViewComponent
 	{
-		private readonly IMyFaceApiService _iMyFaceApiService;
+		private readonly IUserApiAccess _userApiAccess;
 		private readonly string _userId;
 
-		public NavigationBarViewComponents(IMyFaceApiService iMyFaceApiService, IHttpContextAccessor httpContextAccessor)
+		public NavigationBarViewComponents(IUserApiAccess userApiAccess, IHttpContextAccessor httpContextAccessor)
 		{
-			_iMyFaceApiService = iMyFaceApiService;
+			_userApiAccess = userApiAccess;
 			_userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
 		}
 		public async Task<IViewComponentResult> InvokeAsync()
@@ -26,7 +27,7 @@ namespace SemesterProject.MyFaceMVC.ViewComponents
 			{
 				throw new ArgumentNullException(nameof(_userId));
 			}
-			UserToReturnWithCounters bacisUserCounters = await _iMyFaceApiService.GetUser(_userId);
+			UserToReturnWithCounters bacisUserCounters = await _userApiAccess.GetUser(_userId);
 			return View(bacisUserCounters);
 		}
 	}

@@ -12,6 +12,7 @@ namespace SemesterProject.ApiData.Repository
 		Task AddUserAcync(User user);
 		Task DeleteUserAsync(User user);
 		Task<User> GetUserAsync(Guid userId);
+		List<User> GetUsers(IEnumerable<string> usersId);
 		List<User> GetUsers(IEnumerable<Guid> usersId);
 		List<User> GetUsers();
 		Task UpdateUserAsync(User user);

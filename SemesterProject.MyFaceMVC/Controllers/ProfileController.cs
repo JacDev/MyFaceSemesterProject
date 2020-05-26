@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SemesterProject.ApiData.Models;
-using SemesterProject.MyFaceMVC.Services;
+using SemesterProject.MyFaceMVC.ApiAccess;
 using SemesterProject.MyFaceMVC.ViewModels;
 
 namespace SemesterProject.MyFaceMVC.Controllers
@@ -15,21 +15,29 @@ namespace SemesterProject.MyFaceMVC.Controllers
     [Authorize]
     public class ProfileController : Controller
     {
-        private readonly IMyFaceApiService _myFaceApiService;
         private readonly ILogger<ProfileController> logger;
+        private readonly IPostApiAccess _postApiAccess;
+        private readonly INotificationApiAccess _notificationApiAccess;
+        private readonly IUserApiAccess _userApiAccess;
         private readonly string _userId;
-        public ProfileController(IMyFaceApiService myFaceApiService, IHttpContextAccessor httpContextAccessor, ILogger<ProfileController> logger)
+        public ProfileController(IHttpContextAccessor httpContextAccessor,
+            ILogger<ProfileController> logger,
+            IPostApiAccess postApiAccess, 
+            INotificationApiAccess notificationApiAccess,
+            IUserApiAccess userApiAccess)
         {
-            _myFaceApiService = myFaceApiService;
             this.logger = logger;
-            _myFaceApiService.AddUserIfNotExist(httpContextAccessor.HttpContext.User).GetAwaiter();
+            _postApiAccess = postApiAccess;
+            _notificationApiAccess = notificationApiAccess;
+            _userApiAccess = userApiAccess;
+            _userApiAccess.AddUserIfNotExist(httpContextAccessor.HttpContext.User).GetAwaiter();
             _userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var posts = await _myFaceApiService.GetPosts(_userId);
+            var posts = await _postApiAccess.GetPosts(_userId);
             posts.Reverse();
 
             ViewData["userId"] = _userId.ToString();
@@ -40,10 +48,10 @@ namespace SemesterProject.MyFaceMVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Notifications()
         {
-            IEnumerable<NotificationWithBasicFromWhoData> notifications = (await _myFaceApiService.GetNotifications(_userId));
+            IEnumerable<NotificationWithBasicFromWhoData> notifications = (await _notificationApiAccess.GetNotifications(_userId));
             foreach(var notification in notifications)
             {
-                await _myFaceApiService.MarkNotificationAsSeen(_userId, notification.Notification.Id);
+                await _notificationApiAccess.MarkNotificationAsSeen(_userId, notification.Notification.Id);
             }
             return View(notifications);
         }

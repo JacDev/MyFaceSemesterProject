@@ -53,7 +53,6 @@ namespace SemesterProject.ApiData.Repository
 		}
 		public List<Post> GetUserPosts(Guid userId)
 		{
-			_logger.LogInformation("Info z daty");
 			if (userId == Guid.Empty)
 			{
 				throw new ArgumentNullException(nameof(userId));

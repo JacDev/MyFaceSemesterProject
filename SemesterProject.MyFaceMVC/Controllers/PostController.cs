@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SemesterProject.ApiData.Entities;
 using SemesterProject.ApiData.Models;
+using SemesterProject.MyFaceMVC.ApiAccess;
 using SemesterProject.MyFaceMVC.FilesManager;
 using SemesterProject.MyFaceMVC.Services;
 using SemesterProject.MyFaceMVC.ViewModels;
@@ -17,14 +18,19 @@ namespace SemesterProject.MyFaceMVC.Controllers
     [Authorize]
     public class PostController : Controller
     {
-        private readonly IMyFaceApiService _myFaceApiService;
+        private readonly IUserApiAccess _userApiAccess;
         private readonly IImagesManager _imagesManager;
+        private readonly IPostApiAccess _postApiAccess;
         private readonly string _userId;
-        public PostController(IMyFaceApiService myFaceApiService, IHttpContextAccessor httpContextAccessor, IImagesManager imagesManager)
+        public PostController(IUserApiAccess userApiAccess, 
+            IHttpContextAccessor httpContextAccessor, 
+            IImagesManager imagesManager,
+            IPostApiAccess postApiAccess)
         {
-            _myFaceApiService = myFaceApiService;
+            _userApiAccess = userApiAccess;
             _imagesManager = imagesManager;
-            _myFaceApiService.AddUserIfNotExist(httpContextAccessor.HttpContext.User).GetAwaiter();
+            _postApiAccess = postApiAccess;
+            _userApiAccess.AddUserIfNotExist(httpContextAccessor.HttpContext.User).GetAwaiter();
             _userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
         }
 
@@ -42,7 +48,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
                     (imagePath, fullImagePath) = await _imagesManager.SaveImage(post.NewPost.Picture);
                 }
 
-                await _myFaceApiService.AddPost(userId, new PostToAdd
+                await _postApiAccess.AddPost(userId, new PostToAdd
                 {
                   ImageFullPath = fullImagePath,
                   Text = post.NewPost.Text,
@@ -58,7 +64,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
             var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
             if (!string.IsNullOrWhiteSpace(id))
             {
-                await _myFaceApiService.DeletePost(userId, id);
+                await _postApiAccess.DeletePost(userId, id);
             }
             return RedirectToAction(nameof(Index), "Profile");
         }
@@ -70,7 +76,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
             {
                 return NotFound();
             }
-             var post = await _myFaceApiService.GetPost(userId, postId);
+             var post = await _postApiAccess.GetPost(userId, postId);
             if(post == null)
             {
                 return NotFound();
@@ -82,7 +88,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
             List<UserToReturnWithCounters> user = new List<UserToReturnWithCounters>();
             foreach(var userPost in post.PostComments)
             {
-                user.Add(await _myFaceApiService.GetUser(userPost.FromWho.ToString()));
+                user.Add(await _userApiAccess.GetUser(userPost.FromWho.ToString()));
             }
             PostWithCommentToAdd postToReturn = new PostWithCommentToAdd
             {
@@ -108,14 +114,14 @@ namespace SemesterProject.MyFaceMVC.Controllers
                 PostId = Guid.Parse(postId),
                 Text = postComment.Text
             };
-            await _myFaceApiService.AddPostComment(userId, postCommentToAdd);
+            await _postApiAccess.AddPostComment(userId, postCommentToAdd);
             return RedirectToAction(nameof(ShowComments), new { userId, postId });
         }
         [HttpPost("{userId}/{postId}/{commentId}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteComment(string userId, string postId, string commentId)
         {
-            await _myFaceApiService.DeletePostComment(postId, commentId, userId);
+            await _postApiAccess.DeletePostComment(postId, commentId, userId);
             return RedirectToAction(nameof(ShowComments), new { userId, postId });
         }
         [HttpGet("EditPost/{userId}/{postId}")]
@@ -125,7 +131,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
             {
                 return NotFound();
             }
-            var post = await _myFaceApiService.GetPost(userId, postId);
+            var post = await _postApiAccess.GetPost(userId, postId);
             if (post == null)
             {
                 return NotFound();
@@ -139,7 +145,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
             {
                 return NotFound();
             }
-            await _myFaceApiService.UpdatePost(post.UserId.ToString(), post.Id.ToString(), new PostToUpdate
+            await _postApiAccess.UpdatePost(post.UserId.ToString(), post.Id.ToString(), new PostToUpdate
             {
                 ImageFullPath = post.ImageFullPath,
                 ImagePath = post.ImagePath,

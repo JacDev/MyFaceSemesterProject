@@ -13,6 +13,9 @@ using Microsoft.EntityFrameworkCore;
 using SemesterProject.MyFaceMVC.Repository;
 using SemesterProject.MyFaceMVC.Hubs;
 using SemesterProject.MyFaceMVC.FilesManager;
+using SemesterProject.MyFaceMVC.ApiAccess;
+using SemesterProject.ApiData.Entities;
+using System.Runtime.Serialization.Formatters;
 
 namespace SemesterProject.MyFaceMVC
 {
@@ -46,7 +49,6 @@ namespace SemesterProject.MyFaceMVC
 						options.ClaimActions.MapUniqueJsonKey("FirstName", "FirstName");
 						options.ClaimActions.MapUniqueJsonKey("LastName", "LastName");
 
-						//options.GetClaimsFromUserInfoEndpoint = true;
 						options.Scope.Add("openid");
 						options.Scope.Add("profile");
 						options.Scope.Add("MyFaceApi");
@@ -65,6 +67,14 @@ namespace SemesterProject.MyFaceMVC
 					client.BaseAddress = new Uri($"{UrlAddressescs.MyFaceApiUri}");
 				});
 
+
+
+			services.AddScoped<IUserApiAccess, UserApiAccess>();
+			services.AddScoped<IFriendApiAccess, FriendApiAccess>();
+			services.AddScoped<IMessageApiAccess, MessageApiAccess>();
+			services.AddScoped<IPostApiAccess, PostApiAccess>();
+			services.AddScoped<INotificationApiAccess, NotificationApiAccess>();
+
 			services.AddHttpContextAccessor();
 			services.AddDbContext<IOnlineUsers, ChatOnlineUsersContext>(
 				options => options.UseInMemoryDatabase("OnlineUsers")
@@ -76,7 +86,7 @@ namespace SemesterProject.MyFaceMVC
 		}
 
 
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		public void Configure(IApplicationBuilder app)
 		{
 
 			app.UseExceptionHandler("/Home/Error");
