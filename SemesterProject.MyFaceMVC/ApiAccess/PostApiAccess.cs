@@ -25,6 +25,11 @@ namespace SemesterProject.MyFaceMVC.ApiAccess
 			HttpResponseMessage response = await _myFaceApiService.Client.GetFromApiAsync($"api/users/{userId}/posts");
 			return await response.ReadContentAs<List<Post>>();
 		}
+		public async Task<List<Post>> GetLatestPosts(string userId)
+		{
+			HttpResponseMessage response = await _myFaceApiService.Client.GetFromApiAsync($"api/users/{userId}/posts/latest");
+			return await response.ReadContentAs<List<Post>>();
+		}
 		public async Task<HttpResponseMessage> AddPost(string userId, PostToAdd postForAdd)
 		{
 			return await _myFaceApiService.Client.PostToApiAsJsonAsync($"api/users/{userId}/posts", postForAdd);

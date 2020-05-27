@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using SemesterProject.ApiData.Models;
 
 namespace SemesterProject.ApiData.Repository
 {
@@ -90,6 +91,21 @@ namespace SemesterProject.ApiData.Repository
 				throw new ArgumentNullException(nameof(postToReturn));
 			}
 			return postToReturn;
+		}
+		public List<Post> GetLatestFirendsPost(List<Guid> userFriends, Guid userId)
+		{
+			if(userFriends == null || userId == Guid.Empty)
+			{
+				throw new ArgumentNullException();
+			}
+			userFriends.Add(userId);
+			List<Post> posts = _appDbContext.Posts
+				.Include(nameof(_appDbContext.PostComments))
+				.Include(nameof(_appDbContext.PostLikes))
+				.Where(a => userFriends.Contains(a.UserId))
+				.OrderByDescending(p => p.WhenAdded)
+				.ToList();
+			return posts;
 		}
 		public async Task UpdatePostAsync(Post post)
 		{

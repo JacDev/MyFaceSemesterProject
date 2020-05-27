@@ -5,59 +5,19 @@
 }
 
 <h3 class="text-center text-white">@Model.user.FirstName @Model.user.LastName</h3>
-
-<div class="col-12 border p-3 mt-3 bg-white">
+*<div class="col-12 border p-3 mt-3 bg-white">
     <div class="col-12 p-3 mt-3 bg-light">
         <form>
             @{
-                var postCounter = 0;
+                int postCounter = 0;
+                foreach (Post post in Model.Posts)
+                {
+                    await Html.RenderPartialAsync("../Shared/_PostSection", post, new ViewDataDictionary(ViewData) {
+                        {"postCounter", postCounter }
+                    });
+                    postCounter++;
+                }
             }
-            @foreach (var post in Model.Posts)
-            {
-                <div class="mb-5 text-center">
-
-                    @if (!string.IsNullOrEmpty(post.ImagePath))
-                    {
-                        var imagePath = $"/Image/{post.ImagePath}";
-                        <div class="col-12">
-                            <img src="@imagePath" width="400" />
-                        </div>
-                    }
-
-                    <div class="col-12 border border-primary h-auto text-justify bg-light py-2">@post.Text</div>
-
-                    <div class="btn-toolbar justify-content-between row col-12 bg-light">
-
-                        <div class="mt-1 small pl-3 pt-1">@post.WhenAdded</div>
-
-                        <div class="btn-group bg-light">
-                            @{
-                                string postid = post.Id.ToString();
-                                @if (post.PostLikes.Any(x => x.FromWho == Guid.Parse(ViewData["userId"].ToString())))
-                                {
-                                    <button class="btn border" type="button" id="likeButton" onclick="sendLike('@postid', @postCounter, true)">
-                                        <span class="badge badge-light btn" id="@postCounter.ToString()"> <i class="fas fa-thumbs-up fa-lg">@post.PostLikes.Count</i> </span>
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button class="btn border" type="button" id="likeButton" onclick="sendLike('@postid', @postCounter, false)">
-                                        <span class="badge badge-light btn" id="@postCounter.ToString()"> <i class="far fa-thumbs-up fa-lg">@post.PostLikes.Count</i> </span>
-                                    </button>
-                                }
-                            }
-                            <button asp-controller="Post" asp-action="ShowComments" asp-route-userId="@ViewData["userId"]" asp-route-postId="@post.Id.ToString()" class="btn border">
-                                <span class="badge badge-light"><i class="far fa-comments fa-lg">@post.PostComments.Count</i> </span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                postCounter++;
-            }
-        </form>
+       </form>
     </div>
 </div>
-<script>
-	var userId = "@ViewData["userId"]";
-	var friendId = "@ViewData["friendId"]";
-</script>

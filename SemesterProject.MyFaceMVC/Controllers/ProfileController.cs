@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -34,9 +33,26 @@ namespace SemesterProject.MyFaceMVC.Controllers
             _userApiAccess.AddUserIfNotExist(httpContextAccessor.HttpContext.User).GetAwaiter();
             _userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
         }
-
         [HttpGet]
         public async Task<ActionResult<UserPostsWithPostToAdd>> Index()
+        {
+            try
+            {
+                List<Post> posts = await _postApiAccess.GetLatestPosts(_userId);
+                UserPostsWithPostToAdd userToView = new UserPostsWithPostToAdd { Posts = posts, NewPost = new PostWithImageToAdd() };
+                ViewData["userId"] = _userId.ToString();
+                return View(userToView);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong during loading user: {_userId} main view page");
+                _logger.LogError($"Exception info: {ex.Message} {ex.Source}");
+                return RedirectToAction("Error", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<UserPostsWithPostToAdd>> Profile()
         {
             try
             {
@@ -45,7 +61,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
 
                 UserPostsWithPostToAdd userToView = new UserPostsWithPostToAdd { Posts = posts, NewPost = new PostWithImageToAdd() };
                 ViewData["userId"] = _userId.ToString();
-                return View(userToView);
+                return View("Index", userToView);
             }
             catch (Exception ex)
             {

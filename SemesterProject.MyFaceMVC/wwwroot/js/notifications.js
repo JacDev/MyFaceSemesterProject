@@ -45,7 +45,7 @@ document.getElementById("submitButton").addEventListener("click", function (even
     }
 });
 
-function sendLike(postId, postNumber, isLiked) {
+function sendLike(postId, postNumber, isLiked, friendId, userId) {
     var message = "like";
 
     var postNumberAsString = postNumber.toString();

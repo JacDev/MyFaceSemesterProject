@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SemesterProject.ApiData.Entities;
@@ -21,11 +17,13 @@ namespace SemesterProject.MyFaceApi.Controllers
     {
         private readonly IPostRepository _postRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IRelationRepository _relationRepository;
         private readonly ILogger<PostsController> _logger;
         private readonly IMapper _mapper;
         public PostsController(IPostRepository postRepository,
             IMapper mapper, 
             IUserRepository userRepository,
+            IRelationRepository relationRepository,
             ILogger<PostsController> logger)
         {
             _postRepository = postRepository ??
@@ -34,6 +32,7 @@ namespace SemesterProject.MyFaceApi.Controllers
                 throw new ArgumentNullException(nameof(mapper));
             _userRepository = userRepository ??
                 throw new ArgumentNullException(nameof(userRepository));
+            _relationRepository = relationRepository;
             _logger = logger;
         }
         [HttpOptions]
@@ -46,8 +45,6 @@ namespace SemesterProject.MyFaceApi.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Post>> GetPosts(Guid userId)
         {
-            var userID = User.Claims.FirstOrDefault(a => a.Type == "sub")?.Value;
-            _logger.LogInformation("{UserId} in api", userID);
             IEnumerable<Post> userPosts = _postRepository.GetUserPosts(userId);
             return Ok(userPosts);
         }
@@ -61,6 +58,25 @@ namespace SemesterProject.MyFaceApi.Controllers
                 return NotFound();
             }
             return Ok(postToReturn);
+        }
+
+        [HttpGet("latest")]
+        public ActionResult<List<Post>> GetLatestPost(Guid userId)
+        {
+            if (userId == Guid.Empty)
+            {
+                return NotFound();
+            }
+            List<Guid> friendsId = _relationRepository.GetUserRelations(userId)
+                .Select(s => (s.FriendId == userId ? s.UserId : s.FriendId))
+                .ToList();
+
+            if (friendsId != null)
+            {
+                List<Post> postsToReturn = _postRepository.GetLatestFirendsPost(friendsId, userId);
+                return postsToReturn;
+            }
+            return NoContent();
         }
 
         [HttpPost]

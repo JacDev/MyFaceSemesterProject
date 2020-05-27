@@ -12,6 +12,7 @@ namespace SemesterProject.ApiData.Repository
 		Task AddPostAsync(Post post);
 		Task DeletePostAsync(Guid postId);
 		Post GetPost(Guid postId);
+		List<Post> GetLatestFirendsPost(List<Guid> userFriends, Guid userId);
 		Task UpdatePostAsync(Post post);
 
 		Task AddLike(PostLike postLike);

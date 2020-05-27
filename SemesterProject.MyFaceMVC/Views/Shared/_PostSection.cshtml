@@ -1,0 +1,56 @@
+﻿@model Post
+@{
+    Layout = null;
+}
+
+<div class="mb-5 text-center col-12 border p-3 mt-3 bg-white">
+
+    @if (!string.IsNullOrEmpty(Model.ImagePath))
+    {
+        var imagePath = $"/Image/{Model.ImagePath}";
+        <div class="col-12">
+            <img src="@imagePath" width="400" />
+        </div>
+    }
+
+    <div class="col-12 border border-primary h-auto text-justify bg-light py-2">@Model.Text</div>
+
+    <div class="btn-toolbar justify-content-between row col-12 bg-light">
+
+        <div class="mt-1 small pl-3 pt-1">@Model.WhenAdded</div>
+
+        <div class="btn-group bg-light">
+            @{
+                string postCounter = ViewData["postCounter"].ToString();
+                string postid = Model.Id.ToString();
+                @if (Model.PostLikes.Any(x => x.FromWho == Guid.Parse(ViewData["userId"].ToString())))
+                {
+                    <button class="btn border" type="button" id="likeButton" onclick="sendLike('@postid', @postCounter, true,'@Model.UserId', '@ViewData["userId"].ToString()')">
+                        <span class="badge badge-light btn" id="@postCounter"> <i class="fas fa-thumbs-up fa-lg">@Model.PostLikes.Count</i> </span>
+                    </button>
+                }
+                else
+                {
+                    <button class="btn border" type="button" id="likeButton" onclick="sendLike('@postid', @postCounter, false,'@Model.UserId', '@ViewData["userId"].ToString()')">
+                        <span class="badge badge-light btn" id="@postCounter"> <i class="far fa-thumbs-up fa-lg">@Model.PostLikes.Count</i> </span>
+                    </button>
+                }
+
+                <button asp-controller="Post" asp-action="ShowComments" asp-route-userId="@Model.UserId" asp-route-postId="@Model.Id.ToString()" class="btn border">
+                    <span class="badge badge-light"><i class="far fa-comments fa-lg">@Model.PostComments.Count</i> </span>
+                </button>
+
+                if (Model.UserId.ToString() == ViewData["userId"].ToString())
+                {
+                    <button asp-controller="Post" asp-action="EditPost" asp-route-userId="@ViewData["userId"].ToString()" asp-route-postId="@Model.Id.ToString()" class="btn border">
+                        <i class="fas fa-edit fa-align-center"></i>
+                    </button>
+
+                    <button asp-controller="Post" asp-action="DeletePost" asp-route-id="@Model.Id.ToString()" class="btn btn-danger border">
+                        <i class="fas fa-trash-alt fa-adjust"></i>
+                    </button>
+                }
+            }
+        </div>
+    </div>
+</div>

@@ -14,6 +14,7 @@ namespace SemesterProject.MyFaceMVC.ApiAccess
 		Task<HttpResponseMessage> DeletePost(string userId, string postId);
 		Task<HttpResponseMessage> DeletePostComment(string postId, string commentId, string userId);
 		Task<HttpResponseMessage> DeletePostLike(string postId, string fromWho, string userId);
+		Task<List<Post>> GetLatestPosts(string userId);
 		Task<Post> GetPost(string userId, string postId);
 		Task<List<Post>> GetPosts(string userId);
 		Task<HttpResponseMessage> UpdatePost(string userId, string postId, PostToUpdate postToUpdate);

@@ -161,7 +161,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
                 posts.Reverse();
 
                 UserWithPost userToView = new UserWithPost { Posts = posts, user = user };
-                ViewData["friendId"] = friendId;
+                //ViewData["friendId"] = friendId;
                 ViewData["userId"] = _userId.ToString();
                 return View(userToView);
             }
