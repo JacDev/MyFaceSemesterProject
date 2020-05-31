@@ -20,6 +20,22 @@ namespace SemesterProject.ApiData.Repository
 			_appDbContext = appDbContext;
 			_logger = loggerFactory.CreateLogger("UserDatabase");
 		}
+
+		public async Task AddProfilePicture(Guid userId, string imagePath)
+		{
+			if(userId==Guid.Empty || imagePath == null)
+			{
+				throw new ArgumentNullException();
+			}
+			User user = await _appDbContext.Users
+					.SingleOrDefaultAsync(x => x.Id == userId);
+			if (user == null)
+			{
+				throw new ArgumentNullException();
+			}
+			user.ProfileImagePath = imagePath;
+			await _appDbContext.SaveAsync();
+		}
 		public async Task<User> GetUserAsync(Guid userId)
 		{
 		

@@ -21,13 +21,8 @@ function signOut() {
 };
 
 userManager.getUser().then(user => {
-    console.log("user:", user);
     if (user) {
         axios.defaults.headers.common["Authorization"] = "Bearer " + user.access_token;
-        console.log("user is logged");
-    }
-    else {
-        console.log("User not log");
     }
 });
 
@@ -40,7 +35,6 @@ var callApi = function () {
             reply = res;
             console.log(res);
             var data = reply.data;
-            console.log(data);
 
             var list = document.getElementById("messagesList");
            
@@ -52,7 +46,6 @@ var callApi = function () {
 
 
 function wypisz(list, item) {
-    console.log(item['text']);
     if (userId == item['fromWho']) {
         addOldMessage(item['text'], "col-sm-6 offset-sm-6", list, item['when']);
     }

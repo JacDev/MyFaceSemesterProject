@@ -95,6 +95,17 @@ namespace SemesterProject.MyFaceApi.Controllers
 			new { userId = userToReturn.Id },
 			userToReturn);
 		}
+		[HttpPost("{userId}/{imagePath}")]
+		public async Task<IActionResult> AddProfilePic(Guid userId, string imagePath)
+		{
+			if (userId == Guid.Empty)
+			{
+				return NotFound();
+			}
+
+			await _userRepository.AddProfilePicture(userId, imagePath);
+			return Ok();
+		}
 
 		[HttpPatch("{userId}")]
 		public async Task<ActionResult> PartiallyUpdateUser(Guid userId, JsonPatchDocument<BasicUserData> patchDocument)

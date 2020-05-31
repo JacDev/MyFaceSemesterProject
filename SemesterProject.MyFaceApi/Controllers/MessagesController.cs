@@ -61,10 +61,10 @@ namespace SemesterProject.MyFaceApi.Controllers
 			if (userMessages != null)
 			{
 				var previousPageLink = userMessages.HasPrevious ?
-					CreateAuthorsResourceUri(paginationParams, ResourceUriType.PreviousPage) : null;
+					CreateMessagesResourceUri(paginationParams, ResourceUriType.PreviousPage) : null;
 
 				var nextPageLink = userMessages.HasNext ?
-					CreateAuthorsResourceUri(paginationParams, ResourceUriType.NextPage) : null;
+					CreateMessagesResourceUri(paginationParams, ResourceUriType.NextPage) : null;
 
 				userMessages.PreviousPageLink = previousPageLink;
 				userMessages.NextPageLink = nextPageLink;
@@ -101,7 +101,7 @@ namespace SemesterProject.MyFaceApi.Controllers
 			await _messageRepository.AddMessageAsync(messageToAdd);
 			return NoContent();
 		}
-		private string CreateAuthorsResourceUri(
+		private string CreateMessagesResourceUri(
 			PaginationParams paginationParams,
 			ResourceUriType type)
 		{

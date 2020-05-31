@@ -1,12 +1,12 @@
-﻿using SemesterProject.ApiData.Entities;
+﻿using SemesterProject.ApiData.Models;
 using System.Collections.Generic;
 
 namespace SemesterProject.MyFaceMVC.ViewModels
 {
 	public class UserPostsWithPostToAdd
 	{
-		public IEnumerable<Post> Posts { get; set; }
+		public List<BasicUserWithPost> UserWithPosts { get; set; } = new List<BasicUserWithPost>();
 		public PostWithImageToAdd NewPost { get; set; }
-
+		public BasicUserData BasicUser { get; set; }
 	}
 }

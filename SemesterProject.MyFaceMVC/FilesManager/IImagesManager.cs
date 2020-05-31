@@ -9,5 +9,6 @@ namespace SemesterProject.MyFaceMVC.FilesManager
 	{
 		Task<Tuple<string, string>> SaveImage(IFormFile image);
 		FileStream ImageStream(string imageName);
+		string ResizeImage(string imageName, int width, int height);
 	}
 }

@@ -12,6 +12,7 @@ namespace SemesterProject.MyFaceMVC.ViewModels
 		[Required]
 		[NotNull]
 		public string Text { get; set; }
-		public IEnumerable<UserToReturnWithCounters> Users { get; set; }
+		public IEnumerable<BasicUserData> Users { get; set; }
+		public BasicUserData User { get; set; }
 	}
 }

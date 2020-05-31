@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,17 +22,20 @@ namespace SemesterProject.MyFaceMVC.Controllers
         private readonly IImagesManager _imagesManager;
         private readonly IPostApiAccess _postApiAccess;
         private readonly ILogger<PostController> _logger;
+        private readonly IMapper _mapper;
         private readonly string _userId;
         public PostController(IUserApiAccess userApiAccess, 
             IHttpContextAccessor httpContextAccessor, 
             IImagesManager imagesManager,
             IPostApiAccess postApiAccess,
-            ILogger<PostController> logger)
+            ILogger<PostController> logger,
+            IMapper mapper)
         {
             _userApiAccess = userApiAccess;
             _imagesManager = imagesManager;
             _postApiAccess = postApiAccess;
             _logger = logger;
+            _mapper = mapper;
             _userApiAccess.AddUserIfNotExist(httpContextAccessor.HttpContext.User).GetAwaiter();
             _userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
         }
@@ -103,16 +107,17 @@ namespace SemesterProject.MyFaceMVC.Controllers
                 ViewData["currentUserProfileId"] = userId.ToString();
                 ViewData["loggedUserId"] = _userId.ToString();
 
-                List<UserToReturnWithCounters> user = new List<UserToReturnWithCounters>();
+                List<BasicUserData> user = new List<BasicUserData>();
                 foreach (PostComment userPost in post.PostComments)
                 {
-                    user.Add(await _userApiAccess.GetUser(userPost.FromWho.ToString()));
+                    user.Add(_mapper.Map<BasicUserData>(await _userApiAccess.GetUser(userPost.FromWho.ToString())));
                 }
                 PostWithCommentToAdd postToReturn = new PostWithCommentToAdd
                 {
                     Post = post,
                     Text = string.Empty,
-                    Users = user
+                    Users = user,
+                    User = _mapper.Map<BasicUserData>(await _userApiAccess.GetUser(userId))
                 };
 
                 return View(postToReturn);

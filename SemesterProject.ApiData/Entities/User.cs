@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+
 namespace SemesterProject.ApiData.Entities
 {
 	public class User
@@ -8,6 +9,7 @@ namespace SemesterProject.ApiData.Entities
         public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string ProfileImagePath { get; set; } = null;
         public virtual ICollection<Post> Posts { get; set; }
         public virtual ICollection<Relation> Relations { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }

@@ -8,6 +8,7 @@ namespace SemesterProject.MyFaceMVC.ApiAccess
 {
 	public interface IUserApiAccess
 	{
+		Task<HttpResponseMessage> AddProfilePic(string userId, string imagePath);
 		Task<HttpResponseMessage> AddUserIfNotExist(ClaimsPrincipal userPrincipal);
 		Task<List<BasicUserData>> GetFoundUsers(string searchName);
 		Task<UserToReturnWithCounters> GetUser(string userId);

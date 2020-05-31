@@ -5,18 +5,26 @@
         @foreach (var message in Model)
         {
             var toWho = ViewData["userId"].ToString() == message.Message.ToWho.ToString() ? message.Message.FromWho : message.Message.ToWho;
-            <a asp-controller="Message" asp-action="Index" asp-route-friendId="@toWho">
-                <div class="d-flex border mb-2 bg-light">
-                    <div class="p-2">
-                        @message.User.FirstName @message.User.LastName
+        <a asp-controller="Message" asp-action="Index" asp-route-friendId="@toWho" class="text-dark">
+
+            <div class="d-flex border mb-2 bg-light">
+                @if (!string.IsNullOrEmpty(message.User.ProfileImagePath))
+                {
+                    var imagePath = $"/Image/{message.User.ProfileImagePath}";
+                    <div class="float-left mt-1 pr-4">
+                        <img class="rounded-circle" src="@imagePath" />
                     </div>
-                    <div class="p-2 bg-transparent">
-                        @message.Message.Text
-                    </div>
-                    <div class="p-2 ml-auto bg-light">
-                        <span class="p-2">@message.Message.When</span>
-                    </div>
+                }
+                <div class="p-2"> 
+                    @message.User.FirstName @message.User.LastName
                 </div>
-            </a>
+                <div class="p-2 text-center offset-3">
+                    @message.Message.Text
+                </div>
+                <div class="p-2 ml-auto bg-light">
+                    <span class="p-2">@message.Message.When</span>
+                </div>
+            </div>
+        </a>
         }
     </div>

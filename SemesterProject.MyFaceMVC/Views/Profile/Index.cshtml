@@ -4,8 +4,9 @@
     ViewData["Title"] = "Profile";
 }
 
-<h3 class="text-center text-white">@User.Claims.FirstOrDefault(x => x.Type == "FirstName").Value @User.Claims.FirstOrDefault(x => x.Type == "LastName").Value</h3>
-
+@{
+    await Html.RenderPartialAsync("../Shared/_UserSection", Model.BasicUser, new ViewDataDictionary(ViewData) { });
+}
 
 <div class="col-12 border pt-3 bg-white">
     <form asp-controller="Post" asp-action="AddPost" method="post" class="form-group col-12" enctype="multipart/form-data">
@@ -20,11 +21,11 @@
                 <div class="image-upload input-group-append ">
                     <label for="file-input">
                         <i class="far fa-images fa-2x mt-2 mx-1"></i>
-                        
+
                     </label>
                     <input asp-for="@Model.NewPost.Picture" id="file-input" />
                 </div>
-             
+
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-plus"></i></button>
                 </div>
@@ -38,9 +39,9 @@
     <form>
         @{
             int postCounter = 0;
-            foreach (Post post in Model.Posts)
+            foreach (BasicUserWithPost userWithPost in Model.UserWithPosts)
             {
-                await Html.RenderPartialAsync("../Shared/_PostSection", post, new ViewDataDictionary(ViewData) {
+                await Html.RenderPartialAsync("../Shared/_PostSection", userWithPost, new ViewDataDictionary(ViewData) {
                         {"postCounter", postCounter }
                     });
                 postCounter++;
@@ -48,36 +49,5 @@
         }
     </form>
 </div>
-<script>
-    var observe;
-    if (window.attachEvent) {
-        observe = function (element, event, handler) {
-            element.attachEvent('on' + event, handler);
-        };
-    }
-    else {
-        observe = function (element, event, handler) {
-            element.addEventListener(event, handler, false);
-        };
-    }
-    function init() {
-        var text = document.getElementById("text");
-        function resize() {
-            text.style.height = 'auto';
-            text.style.height = text.scrollHeight + 'px';
-        }
-        /* 0-timeout to get the already changed text */
-        function delayedResize() {
-            window.setTimeout(resize, 0);
-        }
-        observe(text, 'change', resize);
-        observe(text, 'cut', delayedResize);
-        observe(text, 'paste', delayedResize);
-        observe(text, 'drop', delayedResize);
-        observe(text, 'keydown', delayedResize);
 
-        text.focus();
-        text.select();
-        resize();
-    }
-</script>
+<script src="~/js/resizeTextarea.js"></script>

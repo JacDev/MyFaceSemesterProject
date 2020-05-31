@@ -17,6 +17,10 @@ namespace SemesterProject.MyFaceMVC.ApiAccess
 		{
 			_myFaceApiService = myFaceApiService;
 		}
+		public async Task <HttpResponseMessage> AddProfilePic(string userId, string imagePath)
+		{
+			return await _myFaceApiService.Client.PostToApiAsJsonAsync($"api/users/{userId}/{imagePath}", "");
+		}
 		public async Task<HttpResponseMessage> AddUserIfNotExist(ClaimsPrincipal userPrincipal)
 		{
 			BasicUserData userToSend = new BasicUserData

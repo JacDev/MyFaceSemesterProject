@@ -13,6 +13,7 @@ using SemesterProject.MyFaceMVC.Hubs;
 using SemesterProject.MyFaceMVC.FilesManager;
 using SemesterProject.MyFaceMVC.ApiAccess;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using AutoMapper;
 
 namespace SemesterProject.MyFaceMVC
 {
@@ -79,6 +80,8 @@ namespace SemesterProject.MyFaceMVC
 
 			services.AddSignalR();
 			services.AddScoped<IImagesManager, ImageManager>();
+
+			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 		}
 
 		public void Configure(IApplicationBuilder app)

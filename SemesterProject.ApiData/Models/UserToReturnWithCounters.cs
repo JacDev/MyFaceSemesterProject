@@ -7,6 +7,7 @@ namespace SemesterProject.ApiData.Models
         public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string ProfileImagePath { get; set; } = null;
         public int NewNotificationsCounter { get; set; }
         public int FriendsCounter { get; set; }
         public int PostCounter { get; set; }

@@ -10,5 +10,6 @@ namespace SemesterProject.MyFaceMVC.ViewModels
 		public string ImagePath { get; set; }
 		public string ImageFullPath { get; set; }
 		public IFormFile Picture { get; set; } = null;
+		public bool IsProfile { get; set; } = false;
 	}
 }

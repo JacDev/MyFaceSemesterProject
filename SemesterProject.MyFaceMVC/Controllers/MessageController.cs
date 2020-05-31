@@ -73,7 +73,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
                     messagesToReturn.Add(new MessagesWithUserData
                     {
                         Message = message,
-                        User = await _userApiAccess.GetUser(message.FromWho.ToString())
+                        User = await _userApiAccess.GetUser(message.FromWho.ToString() == _userId? message.ToWho.ToString() : message.FromWho.ToString())
                     });
                 }
                 ViewData["userId"] = _userId.ToString();

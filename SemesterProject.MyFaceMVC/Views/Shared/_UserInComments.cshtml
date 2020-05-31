@@ -1,0 +1,17 @@
+﻿@model BasicUserData
+
+<div class="col-sm-12 border pb-2 bg-white">
+    <a class=" text-dark" asp-controller="Friends" asp-action="ViewProfile" asp-route-friendId="@Model.Id">
+        @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+        {
+            var imagePath = $"/Image/{Model.ProfileImagePath}";
+            <div class="float-left mt-1 pr-4">
+                <img class="rounded-circle" src="@imagePath" />
+            </div>
+        }
+        <div class="ml-3 mt-2 clearfix">
+            <span class=" float-left">@Model.FirstName @Model.LastName </span>
+            <span class="float-right">@ViewData["whenAdded"]</span>
+        </div>    
+    </a>
+</div>

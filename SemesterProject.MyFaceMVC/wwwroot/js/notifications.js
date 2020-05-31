@@ -31,7 +31,8 @@ connection.on("ReceiveMessage", function (user, message) {
     takenMessages++;
 });
 
-document.getElementById("submitButton").addEventListener("click", function (event) {
+if (document.getElementById("submitButton") != null) {
+    document.getElementById("submitButton").addEventListener("click", function (event) {
     var message = document.getElementById("messageText").value;
     if (message != '') {
         connection.invoke("SendPrivateMessage", friendId, message, userId).catch(function (err) {
@@ -43,7 +44,8 @@ document.getElementById("submitButton").addEventListener("click", function (even
         document.getElementById("messageText").value = "";
         event.preventDefault();
     }
-});
+})
+};
 
 function sendLike(postId, postNumber, isLiked, friendId, userId) {
     var message = "like";

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,18 +22,22 @@ namespace SemesterProject.MyFaceMVC.Controllers
         private readonly IFriendApiAccess _friendApiAccess;
         private readonly ILogger<FriendsController> _logger;
         private readonly string _userId;
+        private readonly IMapper _mapper;
+
         public FriendsController(IHttpContextAccessor httpContextAccessor,
             IPostApiAccess postApiAccess,
             INotificationApiAccess notificationApiAccess,
             IUserApiAccess userApiAccess,
             IFriendApiAccess friendApiAccess,
-            ILogger<FriendsController> logger)
+            ILogger<FriendsController> logger,
+            IMapper mapper)
         {
             _postApiAccess = postApiAccess;
             _notificationApiAccess = notificationApiAccess;
             _userApiAccess = userApiAccess;
             _friendApiAccess = friendApiAccess;
             _logger = logger;
+            _mapper = mapper;
             _userApiAccess.AddUserIfNotExist(httpContextAccessor.HttpContext.User).GetAwaiter();
             _userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
         }
@@ -152,16 +156,23 @@ namespace SemesterProject.MyFaceMVC.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ViewProfile(Guid friendId)
+        public async Task<ActionResult<UserPostsWithPostToAdd>> ViewProfile(Guid friendId)
         {
             try
             {
                 List<Post> posts = await _postApiAccess.GetPosts(friendId.ToString());
-                UserToReturnWithCounters user = await _userApiAccess.GetUser(friendId.ToString());
                 posts.Reverse();
+                var user = _mapper.Map<BasicUserData>(await _userApiAccess.GetUser(friendId.ToString()));
+                UserPostsWithPostToAdd userToView = new UserPostsWithPostToAdd() { NewPost = null };
+                foreach (var post in posts)
+                {
+                    userToView.UserWithPosts.Add(new BasicUserWithPost
+                    {
+                        Post = post,
+                        User = user
+                    });
+                }
 
-                UserWithPost userToView = new UserWithPost { Posts = posts, user = user };
-                //ViewData["friendId"] = friendId;
                 ViewData["userId"] = _userId.ToString();
                 return View(userToView);
             }
