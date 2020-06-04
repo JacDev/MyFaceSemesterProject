@@ -38,27 +38,28 @@
                             <span class="badge badge-light btn" id="@postCounter"> <i class="far fa-thumbs-up fa-lg">@Model.Post.PostLikes.Count</i> </span>
                         </button>
                     }
+            <form>
+                <button asp-controller="Post" asp-action="ShowComments" asp-route-userId="@Model.Post.UserId" asp-route-postId="@Model.Post.Id.ToString()" class="btn border">
+                    <span class="badge badge-light"><i class="far fa-comments fa-lg">@Model.Post.PostComments.Count</i> </span>
+                </button>
 
-                    <button asp-controller="Post" asp-action="ShowComments" asp-route-userId="@Model.Post.UserId" asp-route-postId="@Model.Post.Id.ToString()" class="btn border">
-                        <span class="badge badge-light"><i class="far fa-comments fa-lg">@Model.Post.PostComments.Count</i> </span>
-                    </button>
+                @if (Model.Post.UserId.ToString() == ViewData["userId"].ToString())
+                {
+                <button asp-controller="Post" asp-action="EditPost" asp-route-userId="@ViewData["userId"].ToString()" asp-route-postId="@Model.Post.Id.ToString()" class="btn border">
+                    <i class="fas fa-edit fa-align-center"></i>
+                </button>
 
-                    if (Model.Post.UserId.ToString() == ViewData["userId"].ToString())
-                    {
-                        <button asp-controller="Post" asp-action="EditPost" asp-route-userId="@ViewData["userId"].ToString()" asp-route-postId="@Model.Post.Id.ToString()" class="btn border">
-                            <i class="fas fa-edit fa-align-center"></i>
-                        </button>
-
-                        if (!string.IsNullOrEmpty(Model.Post.ImagePath))
-                        {
-                            <button asp-controller="Profile" asp-action="AddProfilePic" asp-route-id="@Model.Post.Id.ToString()" class="btn btn-success border">
-                                <i class="fas fa-portrait"></i>
-                            </button>
-                        } 
-                        <button asp-controller="Post" asp-action="DeletePost" asp-route-id="@Model.Post.Id.ToString()" class="btn btn-danger border">
-                            <i class="fas fa-trash-alt fa-adjust"></i>
-                        </button>
-                    }
+                if (!string.IsNullOrEmpty(Model.Post.ImagePath))
+                {
+                <button asp-controller="Profile" asp-action="AddProfilePic" asp-route-id="@Model.Post.Id.ToString()" class="btn btn-success border">
+                    <i class="fas fa-portrait"></i>
+                </button>
+                }
+                <button asp-controller="Post" asp-action="DeletePost" asp-route-id="@Model.Post.Id.ToString()" class="btn btn-danger border">
+                    <i class="fas fa-trash-alt fa-adjust"></i>
+                </button>
+                }
+            </form>
                 }
             </div>
         </div>

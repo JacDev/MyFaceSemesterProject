@@ -4,18 +4,18 @@
     ViewData["Title"] = "Comments";
 }
 
-<div class="col-12 border p-3 mt-3 bg-white">
-    @{
-        var x = new BasicUserWithPost
-        {
-            Post = Model.Post,
-            User = Model.User,
-        };
-        await Html.RenderPartialAsync("../Shared/_PostSection", x, new ViewDataDictionary(ViewData) {
+    <div class="col-12 border p-3 mt-3 bg-white">
+        @{
+            var x = new BasicUserWithPost
+            {
+                Post = Model.Post,
+                User = Model.User,
+            };
+            await Html.RenderPartialAsync("../Shared/_PostSection", x, new ViewDataDictionary(ViewData) {
                         {"postCounter", 0.ToString() },
                     { "userId", ViewData["loggedUserId"]}
                     });
-    }
+        }
         <div class="my-4"></div>
 
         @foreach (var comment in Model.Post.PostComments)
@@ -47,14 +47,13 @@
             </div>
 
         }
-
         <form asp-action="AddComment" asp-route-userId="@ViewData["currentUserProfileId"]" asp-route-postId="@Model.Post.Id.ToString()" method="post" class="container col-10">
             <div class="input-group">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <textarea class="form-control" type="text" asp-for="@Model.Text" rows="1" style="height:3em;" id="text"></textarea>
                 <span asp-validation-for="@Model.Text" class="text-danger"></span>
                 <div class="input-group-append">
-                    <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-plus"></i></button>
+                    <button type="submit" class="btn btn-sm btn-success" onclick="send('@ViewData["currentUserProfileId"].ToString()', '@Model.Post.UserId', '@Model.Post.Id');"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
         </form>

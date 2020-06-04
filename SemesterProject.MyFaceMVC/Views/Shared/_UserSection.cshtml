@@ -2,13 +2,21 @@
 
     <div class=" col-sm-12 border pb-3 bg-white form-group">
         <a class=" text-dark" asp-controller="Friends" asp-action="ViewProfile" asp-route-friendId="@Model.Id">
-            @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
-            {
-                var imagePath = $"/Image/{Model.ProfileImagePath}";
-                <div class="float-left mt-1 pr-4">
-                    <img class="rounded-circle" src="@imagePath" />
-                </div>
+            @{
+                string imagePath = "";
+
+                if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+                {
+                    imagePath = $"/Image/{Model.ProfileImagePath}";
+                }
+                else
+                {
+                    imagePath = $"/Image/default.jpg";
+                }
             }
+            <div class="float-left mt-1 pr-4">
+                <img class="rounded-circle" src="@imagePath" />
+            </div>
             <div class="ml-3 mt-2">
                 <h5 class="">@Model.FirstName @Model.LastName </h5>
             </div>

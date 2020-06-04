@@ -25,10 +25,10 @@ userManager.getUser().then(user => {
         axios.defaults.headers.common["Authorization"] = "Bearer " + user.access_token;
     }
 });
-
+//6f63eccb-8929-41e2-834b-d32dcc9231bf/messages/43f007fe-2a6e-44ed-9f12-bc77e624f586
 
 var callApi = function () {
-    var link = 'https://localhost:44349/api/users/6f63eccb-8929-41e2-834b-d32dcc9231bf/messages/43f007fe-2a6e-44ed-9f12-bc77e624f586/?PageSize=10&Skip=';
+    var link = 'https://localhost:44349/api/users/' + userId + '/messages/' + friendId + '/?PageSize=10&Skip=';
     var fulllink = link + takenMessages;
     axios.get(fulllink)
         .then(res => {
@@ -71,7 +71,10 @@ function addOldMessage(message, offset, list, when) {
     span.className = "time-left text-light";
 
     var currentdate = new Date(when);
-    var datetime = currentdate.getHours() + ":"
+    var datetime = currentdate.getDay() + '.'
+        + currentdate.getMonth() + '.'
+        + currentdate.getFullYear() + ' '
+        + currentdate.getHours() + ":"
         + currentdate.getMinutes() + ":"
         + currentdate.getSeconds();
 

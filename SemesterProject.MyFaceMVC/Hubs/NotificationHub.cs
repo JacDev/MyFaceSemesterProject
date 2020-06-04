@@ -83,6 +83,17 @@ namespace SemesterProject.MyFaceMVC.Hubs
 							NotificationType = NotificationType.FriendRequiest
 						});
 					}
+					else if(notificationType == "comment")
+					{
+						await _notificationApiAccess.AddNotification(new NotificationToAdd
+						{
+							FromWho = Guid.Parse(fromWho),
+							UserId = Guid.Parse(toUserId),
+							WasSeen = false,
+							NotificationType = NotificationType.Comment,
+							EventId = Guid.Parse(eventId)
+						});
+					}
 
 					// send message if user is online
 					if (_onlineUsers.IsUserOnline(toUserId))

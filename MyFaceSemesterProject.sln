@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemesterProject.MyFaceMVC",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemesterProject.MyFaceApi", "SemesterProject.MyFaceApi\SemesterProject.MyFaceApi.csproj", "{9482C155-84AF-4E74-8DED-00D6217F6246}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemesterProject.ApiData", "SemesterProject.ApiData\SemesterProject.ApiData.csproj", "{43A5B19C-AD6D-4337-9635-9E30EE89CB8C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemesterProject.ApiData", "SemesterProject.ApiData\SemesterProject.ApiData.csproj", "{43A5B19C-AD6D-4337-9635-9E30EE89CB8C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,8 +31,8 @@ Global
 		{9482C155-84AF-4E74-8DED-00D6217F6246}.Release|Any CPU.Build.0 = Release|Any CPU
 		{43A5B19C-AD6D-4337-9635-9E30EE89CB8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{43A5B19C-AD6D-4337-9635-9E30EE89CB8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43A5B19C-AD6D-4337-9635-9E30EE89CB8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43A5B19C-AD6D-4337-9635-9E30EE89CB8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43A5B19C-AD6D-4337-9635-9E30EE89CB8C}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{43A5B19C-AD6D-4337-9635-9E30EE89CB8C}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

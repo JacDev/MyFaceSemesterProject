@@ -1,26 +1,35 @@
 ﻿@model BasicUserData
 
-<div class=" col-sm-12 border pb-2 bg-white form-group clearfix">
-    <a class=" text-dark" asp-controller="Friends" asp-action="ViewProfile" asp-route-friendId="@Model.Id">
-        @if (!string.IsNullOrEmpty(Model.ProfileImagePath))
-        {
-            var imagePath = $"/Image/{Model.ProfileImagePath}";
+    <div class=" col-sm-12 border pb-2 bg-white form-group clearfix">
+        <a class=" text-dark" asp-controller="Friends" asp-action="ViewProfile" asp-route-friendId="@Model.Id">
+            @{
+                string imagePath = "";
+
+                if (!string.IsNullOrEmpty(Model.ProfileImagePath))
+                {
+                    imagePath = $"/Image/{Model.ProfileImagePath}";
+                }
+                else
+                {
+                    imagePath = $"/Image/default.jpg";
+                }
+            }
             <div class="float-left mt-1 pr-4">
                 <img class="rounded-circle" src="@imagePath" />
             </div>
-        }
 
-        <div class="ml-3 mt-3 float-left">
-            <span class="">@Model.FirstName @Model.LastName </span>
-        </div>
-    </a>
-    <div class="float-right  mt-3">
-        <button asp-controller="Message" asp-action="Index" asp-route-friendId="@Model.Id" class="btn btn-primary btn-sm mr-1">
-            <i class="fab fa-facebook-messenger"></i>
-        </button>
+            <div class="ml-3 mt-3 float-left">
+                <span class="">@Model.FirstName @Model.LastName </span>
+            </div>
+        </a>
+            <div class="float-right  mt-3">
+                <a asp-controller="Message" asp-action="Conversation" asp-route-friendId="@Model.Id" class="btn btn-primary btn-sm mr-1">
+                    <i class="fab fa-facebook-messenger"></i>
+                </a>
 
-        <button asp-controller="Friends" asp-action="DeleteFriend" asp-route-friendId="@Model.Id" class="btn btn-danger btn-sm">
-            <i class="fas fa-user-times"></i>
-        </button>
-    </div>
+                <button asp-controller="Friends" asp-action="DeleteFriend" asp-route-friendId="@Model.Id" class="btn btn-danger btn-sm">
+                    <i class="fas fa-user-times"></i>
+                </button>
+            </div>
+
 </div>

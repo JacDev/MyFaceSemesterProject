@@ -2,6 +2,12 @@
 
 var likedPost = {};
 
+function send(userId, friendId, postId) {
+    var message = "comment";
+    connection.invoke("SendPrivateNotificaion", friendId, message, userId, postId, false).catch(function (err) {
+       return console.error(err.toString());
+    });
+};
 
 connection.start().then(function () {
     var button = document.getElementById("submitButton");
@@ -115,6 +121,7 @@ function addMessage(message, offset) {
 
     document.getElementById("messagesList").appendChild(li);
 }
+
 
 
 function sendNotification(userId, friendId, eventId, notificationType) {

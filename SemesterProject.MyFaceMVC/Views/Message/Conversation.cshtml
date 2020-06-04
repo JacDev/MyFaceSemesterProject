@@ -34,7 +34,7 @@
                             <div class="@offset">
                                 <div class="container darker bg-primary">
                                     <p class="text-left text-white m-1">@message.Text</p>
-                                    <span class="time-left text-light">@message.When.ToString("M/dd/yyyy hh:MM tt")</span>
+                                    <span class="time-left text-light">@message.When.ToString("M/dd/yyyy hh:MM:ss")</span>
                                 </div>
                             </div>
                         </li>
@@ -56,8 +56,8 @@
 @if (User.Identity.IsAuthenticated)
 {
     <script>
-	var userId = "@ViewData["userId"]";
-            var friendId = "@ViewData["friendId"]";
+	    var userId = "@ViewData["userId"]";
+        var friendId = "@ViewData["friendId"]";
     </script>
 
 

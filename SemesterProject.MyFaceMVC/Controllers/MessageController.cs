@@ -31,14 +31,15 @@ namespace SemesterProject.MyFaceMVC.Controllers
             _userId = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
         }
         [HttpGet]
-        public async Task<ActionResult<PagedList<Message>>> Index(string friendId)
+        public async Task<ActionResult<PagedList<Message>>> Conversation([FromQuery] string friendId)
         {
+            var s = friendId.ToString();
             try
             {
-                if (!string.IsNullOrWhiteSpace(friendId))
+                if (!string.IsNullOrWhiteSpace(s))
                 {
-                    PagedList<Message> messages = await _messageApiService.GetMessagesWith(_userId, friendId, new PaginationParams { PageNumber = 0, PageSize = 10 });
-                    var friend = await _userApiAccess.GetUser(friendId);
+                    PagedList<Message> messages = await _messageApiService.GetMessagesWith(_userId, s, new PaginationParams { PageNumber = 0, PageSize = 10 });
+                    var friend = await _userApiAccess.GetUser(s);
                     ViewData["friendId"] = friendId;
                     ViewData["userId"] = _userId.ToString();
                     if (friend != null)

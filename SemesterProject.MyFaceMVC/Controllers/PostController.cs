@@ -177,7 +177,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
             }
         }
         [HttpGet("EditPost/{userId}/{postId}")]
-        public async Task<ActionResult<Post>> EditPost(string userId, string postId)
+        public async Task<ActionResult<PostToEdit>> EditPost(string userId, string postId)
         {
             try
             {
@@ -190,7 +190,7 @@ namespace SemesterProject.MyFaceMVC.Controllers
                 {
                     return NotFound();
                 }
-                return View(post);
+                return View(new PostToEdit { Id = post.Id, Text = post.Text, UserId = post.UserId });
             }
             catch (Exception ex)
             {
@@ -199,9 +199,9 @@ namespace SemesterProject.MyFaceMVC.Controllers
                 return RedirectToAction("Error", "Error");
             }
         }
-        [HttpPost("EditPost/{userId}/{postId}")]
+        [HttpPost("UpdatePost/{userId}/{postId}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPost([FromBody] Post post)
+        public async Task<IActionResult> UpdatePost(string userId, string postId, PostToEdit post)
         {
             try
             {
@@ -211,8 +211,6 @@ namespace SemesterProject.MyFaceMVC.Controllers
                 }
                 await _postApiAccess.UpdatePost(post.UserId.ToString(), post.Id.ToString(), new PostToUpdate
                 {
-                    ImageFullPath = post.ImageFullPath,
-                    ImagePath = post.ImagePath,
                     Text = post.Text
                 });
                 return RedirectToAction(nameof(Index), "Profile");
