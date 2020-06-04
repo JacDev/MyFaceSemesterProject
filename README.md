@@ -1,5 +1,5 @@
 UKSW Semester Project - social media website
-Contains:
+contains:
 - real time chat using SignalR and js
 - real time notifications using SignalR and js
 - .net api to strore user data like posts, messeges, notifications and relations using EF core
